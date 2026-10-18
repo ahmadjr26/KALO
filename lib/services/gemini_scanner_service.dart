@@ -56,8 +56,8 @@ class GeminiScannerService {
     return fallback;
   }
 
-  MealLog _fallbackDefaultMeal(String? userId) {
-    return MealLog(
+  Future<MealLog> _fallbackDefaultMeal(String? userId, [String? cacheKey]) async {
+    final fallbackMeal = MealLog(
       id: const Uuid().v4(),
       userId: userId ?? '',
       foodName: 'Scanned Meal',
@@ -69,6 +69,16 @@ class GeminiScannerService {
       ingredients: const [],
       loggedAt: DateTime.now(),
     );
+    if (cacheKey != null) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final serialized = jsonEncode(fallbackMeal.toJson());
+        await prefs.setString(cacheKey, serialized);
+        final recentKey = 'kalo_recent_${fallbackMeal.foodName.toLowerCase().trim()}';
+        await prefs.setString(recentKey, serialized);
+      } catch (_) {}
+    }
+    return fallbackMeal;
   }
 
   Future<MealLog> scanFoodImage({
@@ -156,26 +166,26 @@ class GeminiScannerService {
     }
 
     if (response == null || response.statusCode != 200 || response.body.trim().isEmpty) {
-      return _fallbackDefaultMeal(userId);
+      return await _fallbackDefaultMeal(userId, cacheKey);
     }
 
     dynamic responseJson;
     try {
       responseJson = jsonDecode(response.body);
     } catch (_) {
-      return _fallbackDefaultMeal(userId);
+      return await _fallbackDefaultMeal(userId, cacheKey);
     }
 
     final candidates = (responseJson is Map) ? (responseJson['candidates'] as List?) : null;
     if (candidates == null || candidates.isEmpty) {
-      return _fallbackDefaultMeal(userId);
+      return await _fallbackDefaultMeal(userId, cacheKey);
     }
 
     final firstCandidate = candidates[0] is Map ? (candidates[0] as Map<String, dynamic>) : null;
     final content = firstCandidate?['content'] as Map<String, dynamic>?;
     final parts = content?['parts'] as List?;
     if (parts == null || parts.isEmpty) {
-      return _fallbackDefaultMeal(userId);
+      return await _fallbackDefaultMeal(userId, cacheKey);
     }
 
     final rawJsonText = (parts[0] is Map) ? (parts[0]['text'] as String? ?? '{}') : '{}';

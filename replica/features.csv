@@ -1,0 +1,31 @@
+feature,area,priority,original,clone,notes
+Single-decision onboarding questionnaire,onboarding,must,yes,yes,Implemented in OnboardingFlowScreen S01-S13
+Dynamic caloric and macro budget calculator,onboarding,must,yes,yes,Calculates BMR TDEE and target deficit/surplus based on biometrics
+Personalized projection and social proof screens,onboarding,must,yes,yes,Visual weight progression graph with trust badges
+Commitment pledge interaction,onboarding,should,yes,yes,Press-and-hold tactile commitment screen in OnboardingFlowScreen
+Hard paywall with trial and annual anchor,monetization,must,yes,yes,PaywallScreen S14 with annual 3-day trial and monthly option
+Exit-intent gamified discount wheel,monetization,should,yes,yes,Spin-to-win discount modal triggered on paywall dismissal
+Dashboard with visual calorie budget ring,dashboard,must,yes,yes,CustomPainter CalorieBudgetRing showing remaining calories and progress
+Macronutrient breakdown cards,dashboard,must,yes,yes,Animated progress bars for protein carbs and fats
+Daily meal timeline categorization,dashboard,must,yes,yes,Breakfast lunch dinner and snacks groupings
+Daily streak counter and milestones,dashboard,should,yes,yes,Consecutive days logged with milestone celebrations
+AI photo food recognition and macro analysis,camera & ai,must,yes,yes,CameraScannerScreen and ScanResultScreen with ingredient breakdown
+Itemized ingredient and portion breakdown,camera & ai,must,yes,yes,Identifies distinct plate components with grams and serving units
+Serving size and ingredient adjustment modal,camera & ai,must,yes,yes,EditIngredientSheet allows adjusting portions and live macro recalculation
+Health rating and nutritional score breakdown,camera & ai,should,yes,yes,Nutritional quality analysis for sugar processing and sodium
+Barcode scanner for packaged grocery items,logging,should,yes,yes,BarcodeScannerScreen S19 with reticle and product lookup
+Nutrition facts label OCR scanner,logging,should,yes,yes,LabelScannerScreen S20 with table framing and OCR parsing
+Voice and natural language meal logging,logging,should,yes,yes,VoiceLogScreen S21 with speech-to-text transcript and AI extraction
+Manual food database search and custom items,logging,must,yes,yes,FoodSearchScreen S22 with instant search and one-tap log
+Logged meal editing and deletion,logging,must,yes,yes,MealDetailScreen S23 with ingredient view and delete confirmation
+Water intake tracker with quick-add presets,hydration,should,yes,yes,HydrationScreen S24 with +250ml +500ml +1000ml presets
+Weight logging and progress trend chart,body tracking,should,yes,yes,Integrated with profile biometrics and onboarding
+Body progress photo comparison,body tracking,could,yes,partial,Photo upload supported in data model
+Intermittent fasting tracker and stage timer,fasting,could,yes,yes,FastingScreen S26 with metabolic stage indicators (16:8)
+Health platform sync (Apple Health / Health Connect),integrations,should,yes,partial,Configured in settings and permissions
+Social groups and challenge leaderboards,community,could,yes,yes,GroupsScreen S28 with streak leaderboard
+Weekly nutrition summary export,analytics,could,yes,yes,AnalyticsScreen S27 with weekly deficit compliance and PDF trigger
+Home screen quick-action widgets,widgets,could,yes,partial,Preview designs ready in replica/screens
+Push notifications and mealtime reminders,notifications,should,yes,partial,Notification preference toggles in SettingsScreen S29
+Custom trained on-device computer vision model,infrastructure,could,yes,skip,Use cloud multimodal vision LLMs instead of custom trained edge models
+Closed proprietary medical food database,data,could,yes,skip,Use USDA FoodData Central and OpenFoodFacts instead of proprietary licensing

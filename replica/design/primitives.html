@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cal AI Replica — Design System Primitives</title>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+      transition: background-color var(--motion-base) var(--motion-ease), color var(--motion-base) var(--motion-ease);
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-pill);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-accent {
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+    }
+    .theme-toggle {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--motion-fast) var(--motion-ease);
+    }
+    .theme-toggle:hover {
+      border-color: var(--color-border-input);
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+    h2 {
+      font-size: var(--text-lg);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-subtle);
+      transition: transform var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
+    }
+    .card:hover {
+      border-color: var(--color-border-input);
+    }
+    /* Swatches */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.75rem;
+    }
+    .swatch {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+    }
+    .swatch-color {
+      height: 48px;
+    }
+    .swatch-info {
+      padding: 0.5rem;
+      background: var(--color-surface);
+      font-size: var(--text-xs);
+    }
+    .swatch-name {
+      font-weight: 600;
+    }
+    .swatch-hex {
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+    }
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all var(--motion-fast) var(--motion-ease);
+      text-decoration: none;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+      box-shadow: var(--shadow-glow-accent);
+    }
+    .btn-secondary {
+      background-color: var(--color-surface);
+      border-color: var(--color-border);
+      color: var(--color-text);
+    }
+    .btn-secondary:hover {
+      border-color: var(--color-border-input);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-muted);
+    }
+    .btn-ghost:hover {
+      color: var(--color-text);
+      background: var(--color-surface);
+    }
+    .btn-danger {
+      background-color: var(--color-danger);
+      color: #000000;
+    }
+    .btn-sm {
+      height: 36px;
+      padding: 0 1rem;
+      font-size: var(--text-sm);
+    }
+    .btn-md {
+      height: 48px;
+      padding: 0 1.5rem;
+      font-size: var(--text-base);
+    }
+    .btn-lg {
+      height: 56px;
+      padding: 0 2rem;
+      font-size: var(--text-md);
+      font-weight: 700;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    /* Hero Calorie Ring */
+    .hero-ring-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: radial-gradient(circle at center, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-border);
+    }
+    .ring-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
+    .ring-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .ring-track {
+      stroke: var(--color-border);
+      fill: none;
+      stroke-width: 14;
+    }
+    .ring-progress {
+      stroke: var(--color-accent);
+      fill: none;
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-dasharray: 628;
+      stroke-dashoffset: 220;
+      transition: stroke-dashoffset 1s var(--motion-spring);
+    }
+    .ring-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring-calories {
+      font-size: var(--text-display);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .ring-label {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* Macro Bars */
+    .macro-bar-container {
+      margin-top: 1rem;
+    }
+    .macro-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-sm);
+      margin-bottom: 0.35rem;
+    }
+    .macro-name {
+      font-weight: 600;
+    }
+    .macro-stat {
+      color: var(--color-text-muted);
+    }
+    .macro-track {
+      height: 8px;
+      background: var(--color-border);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .macro-fill {
+      height: 100%;
+      border-radius: var(--radius-pill);
+      transition: width 0.8s var(--motion-spring);
+    }
+    /* Option Cards */
+    .option-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      user-select: none;
+      transition: all var(--motion-fast) var(--motion-ease);
+    }
+    .option-card:hover {
+      border-color: var(--color-border-input);
+    }
+    .option-card.selected {
+      background: var(--color-surface-elevated);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 1px var(--color-accent);
+    }
+    .radio-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--motion-fast) var(--motion-ease);
+    }
+    .option-card.selected .radio-circle {
+      border-color: var(--color-accent);
+      background-color: var(--color-accent);
+    }
+    .radio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-on-accent);
+      display: none;
+    }
+    .option-card.selected .radio-dot {
+      display: block;
+    }
+    /* Segmented Toggle */
+    .segmented-control {
+      display: inline-flex;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      padding: 3px;
+    }
+    .segment-btn {
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-pill);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--motion-fast) var(--motion-ease);
+    }
+    .segment-btn.active {
+      background: var(--color-surface-elevated);
+      color: var(--color-text);
+      box-shadow: var(--shadow-subtle);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <h1>Design System Primitives</h1>
+          <span class="badge badge-accent">WCAG AA Zero Failures</span>
+        </div>
+        <p style="color: var(--color-text-muted); font-size: var(--text-sm);">
+          Cal AI Clone — Component Specs, Design Tokens & Accessible Contrast Verification
+        </p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+        <span id="themeIcon">☀️</span>
+        <span id="themeLabel">Light Mode</span>
+      </button>
+    </header>
+
+    <!-- 1. Color Roles & WCAG Swatches -->
+    <section>
+      <h2>Color Roles & Functional Palette</h2>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-bg);"></div>
+          <div class="swatch-info"><div class="swatch-name">bg</div><div class="swatch-hex">#0a0c10</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-surface);"></div>
+          <div class="swatch-info"><div class="swatch-name">surface</div><div class="swatch-hex">#16191f</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-surface-elevated);"></div>
+          <div class="swatch-info"><div class="swatch-name">surface-elevated</div><div class="swatch-hex">#21262d</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-accent);"></div>
+          <div class="swatch-info"><div class="swatch-name">accent</div><div class="swatch-hex">#10b981</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-macro-protein);"></div>
+          <div class="swatch-info"><div class="swatch-name">protein</div><div class="swatch-hex">#60a5fa</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-macro-carbs);"></div>
+          <div class="swatch-info"><div class="swatch-name">carbs</div><div class="swatch-hex">#fb923c</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-macro-fat);"></div>
+          <div class="swatch-info"><div class="swatch-name">fat</div><div class="swatch-hex">#facc15</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background-color: var(--color-danger);"></div>
+          <div class="swatch-info"><div class="swatch-name">danger</div><div class="swatch-hex">#f87171</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Hero Widget: Calorie Ring & Macro Bars -->
+    <section>
+      <h2>Core Tracking Widgets</h2>
+      <div class="grid">
+        <div class="hero-ring-container">
+          <div class="ring-wrapper">
+            <svg class="ring-svg" viewBox="0 0 220 220">
+              <circle class="ring-track" cx="110" cy="110" r="95"></circle>
+              <circle class="ring-progress" cx="110" cy="110" r="95"></circle>
+            </svg>
+            <div class="ring-content">
+              <span class="ring-calories" id="caloriesVal">1,420</span>
+              <span class="ring-label">Calories Left</span>
+            </div>
+          </div>
+          <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 1rem;">
+            Budget: 2,100 kcal &bull; Food: 680 kcal
+          </p>
+        </div>
+
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
+          <h3 style="font-size: var(--text-base); margin-bottom: 1.25rem;">Daily Macros</h3>
+          
+          <div class="macro-bar-container">
+            <div class="macro-header">
+              <span class="macro-name" style="color: var(--color-macro-protein);">Protein</span>
+              <span class="macro-stat">95g / 160g</span>
+            </div>
+            <div class="macro-track">
+              <div class="macro-fill" style="width: 59%; background-color: var(--color-macro-protein);"></div>
+            </div>
+          </div>
+
+          <div class="macro-bar-container">
+            <div class="macro-header">
+              <span class="macro-name" style="color: var(--color-macro-carbs);">Carbs</span>
+              <span class="macro-stat">120g / 210g</span>
+            </div>
+            <div class="macro-track">
+              <div class="macro-fill" style="width: 57%; background-color: var(--color-macro-carbs);"></div>
+            </div>
+          </div>
+
+          <div class="macro-bar-container">
+            <div class="macro-header">
+              <span class="macro-name" style="color: var(--color-macro-fat);">Fat</span>
+              <span class="macro-stat">32g / 65g</span>
+            </div>
+            <div class="macro-track">
+              <div class="macro-fill" style="width: 49%; background-color: var(--color-macro-fat);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Primary Buttons & Actions -->
+    <section>
+      <h2>Buttons & Interactions</h2>
+      <div class="card">
+        <div class="btn-row" style="margin-bottom: 1.25rem;">
+          <button class="btn btn-primary btn-lg">Log This Meal (56px)</button>
+          <button class="btn btn-primary btn-md">Continue</button>
+          <button class="btn btn-primary btn-sm">Scan</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-md">Adjust Portions</button>
+          <button class="btn btn-ghost btn-md">Skip for now</button>
+          <button class="btn btn-danger btn-md">Delete Meal</button>
+          <button class="btn btn-primary btn-md" disabled>Disabled State</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Onboarding & Form Controls -->
+    <section>
+      <h2>Onboarding & Survey Cards</h2>
+      <div class="grid">
+        <div class="option-card selected" onclick="toggleOption(this)">
+          <div>
+            <div style="font-weight: 700; font-size: var(--text-base);">Lose Weight</div>
+            <div style="font-size: var(--text-sm); color: var(--color-text-muted);">Caloric deficit with high protein retention</div>
+          </div>
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+        </div>
+
+        <div class="option-card" onclick="toggleOption(this)">
+          <div>
+            <div style="font-weight: 700; font-size: var(--text-base);">Build Muscle</div>
+            <div style="font-size: var(--text-sm); color: var(--color-text-muted);">Calorie surplus tuned for progressive overload</div>
+          </div>
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: var(--text-sm); color: var(--color-text-muted);">Unit System Toggle</span>
+        <div class="segmented-control">
+          <button class="segment-btn active" onclick="setSegment(this)">Metric (kg/cm)</button>
+          <button class="segment-btn" onclick="setSegment(this)">Imperial (lbs/ft)</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+      document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    }
+
+    function toggleOption(el) {
+      const parent = el.parentElement;
+      parent.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function setSegment(btn) {
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

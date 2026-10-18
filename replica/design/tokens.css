@@ -1,0 +1,101 @@
+/* ==============================================================================
+   Cal AI Replica Design Tokens (tokens.css)
+   Theme Variables, Typography, Spacing, Radii, Shadows & Motion
+   ============================================================================== */
+
+:root {
+  /* Color Roles (Default: Dark Mode) */
+  --color-bg: #0a0c10;
+  --color-surface: #16191f;
+  --color-surface-elevated: #21262d;
+  --color-border: #2b3039;
+  --color-border-input: #616c7d;
+  --color-text: #f3f4f6;
+  --color-text-muted: #a1aab7;
+  --color-accent: #10b981;
+  --color-on-accent: #000000;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-success: #34d399;
+
+  /* Nutrition Macro Colors */
+  --color-macro-protein: #60a5fa;
+  --color-macro-carbs: #fb923c;
+  --color-macro-fat: #facc15;
+  --color-macro-calories: #10b981;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Type Scale */
+  --text-xs: 0.75rem;     /* 12px / 16px line */
+  --text-sm: 0.875rem;    /* 14px / 20px line */
+  --text-base: 1rem;      /* 16px / 24px line */
+  --text-md: 1.125rem;    /* 18px / 26px line */
+  --text-lg: 1.25rem;     /* 20px / 28px line */
+  --text-xl: 1.5rem;      /* 24px / 32px line */
+  --text-2xl: 1.875rem;   /* 30px / 36px line */
+  --text-display: 2.375rem; /* 38px / 44px line */
+
+  /* Spacing */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-floating: 0 12px 32px rgba(0, 0, 0, 0.7);
+  --shadow-glow-accent: 0 0 20px rgba(16, 185, 129, 0.35);
+  --shadow-glow-calories: 0 0 24px rgba(16, 185, 129, 0.4);
+
+  /* Motion */
+  --motion-instant: 80ms;
+  --motion-fast: 140ms;
+  --motion-base: 220ms;
+  --motion-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Light Mode Overrides */
+[data-theme='light'],
+.light {
+  --color-bg: #ffffff;
+  --color-surface: #f4f5f7;
+  --color-surface-elevated: #ffffff;
+  --color-border: #e2e5ea;
+  --color-border-input: #6b7280;
+  --color-text: #111827;
+  --color-text-muted: #4b5563;
+  --color-accent: #047857;
+  --color-on-accent: #ffffff;
+  --color-danger: #dc2626;
+  --color-warning: #b45309;
+  --color-success: #15803d;
+
+  --color-macro-protein: #2563eb;
+  --color-macro-carbs: #c2410c;
+  --color-macro-fat: #a16207;
+  --color-macro-calories: #047857;
+
+  --shadow-subtle: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-card: 0 4px 12px rgba(16, 24, 40, 0.08);
+  --shadow-floating: 0 12px 32px rgba(16, 24, 40, 0.12);
+  --shadow-glow-accent: 0 0 16px rgba(4, 120, 87, 0.2);
+}

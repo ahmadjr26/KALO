@@ -5,7 +5,7 @@ import 'package:cal_ai_app/main.dart';
 
 void main() {
   testWidgets('CalAiApp launches and shows dashboard nutrition headers', (WidgetTester tester) async {
-    // Configure standard mobile portrait viewport (iPhone/Pixel dimensions)
+
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -19,7 +19,6 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    // Verify key dashboard UI elements
     expect(find.text("TODAY'S NUTRITION"), findsOneWidget);
     expect(find.text("Daily Macronutrients"), findsOneWidget);
     expect(find.text("Today's Meals"), findsOneWidget);

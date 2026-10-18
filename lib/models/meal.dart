@@ -28,7 +28,7 @@ class Meal {
   final MealSource sourceType;
   final DateTime loggedAt;
   final String? photoUrl;
-  final int healthScore; // 1 to 10
+  final int healthScore; 
   final List<MealIngredient> ingredients;
   final String? notes;
 

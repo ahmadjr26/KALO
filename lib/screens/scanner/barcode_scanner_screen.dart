@@ -61,7 +61,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // Barcode Viewfinder Reticle
+
           Container(
             width: 300,
             height: 180,

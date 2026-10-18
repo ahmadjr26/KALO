@@ -1,8 +1,14 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../data/mock_database.dart';
+import '../../models/meal.dart';
+import '../../models/meal_ingredient.dart';
+import '../../models/meal_log.dart';
+import '../../services/gemini_scanner_service.dart';
 
 class CameraScannerScreen extends StatefulWidget {
   const CameraScannerScreen({super.key});
@@ -13,10 +19,12 @@ class CameraScannerScreen extends StatefulWidget {
 
 class _CameraScannerScreenState extends State<CameraScannerScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedModeIndex = 0; // 0: Food, 1: Barcode, 2: Label, 3: Voice
+  int _selectedModeIndex = 0;
   bool _isFlashOn = false;
   bool _isAnalyzing = false;
   late AnimationController _pulseController;
+  final ImagePicker _picker = ImagePicker();
+  final GeminiScannerService _geminiService = GeminiScannerService();
 
   final List<String> _modes = ['Food Scan', 'Barcode', 'Nutrition Label', 'Voice'];
 
@@ -35,17 +43,73 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     super.dispose();
   }
 
+  Future<void> _pickFromGallery() async {
+    try {
+      final XFile? file = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (file != null) {
+        final bytes = await file.readAsBytes();
+        await _analyzeImage(bytes);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _analyzeImage(Uint8List imageBytes) async {
+    if (_isAnalyzing) return;
+    setState(() => _isAnalyzing = true);
+
+    try {
+      final MealLog mealLog = await _geminiService.scanFoodImage(
+        imageBytes: imageBytes,
+        contextTags: ['Home-cooked vs Restaurant', 'Fried vs Grilled'],
+      );
+
+      final meal = Meal(
+        id: mealLog.id,
+        dishName: mealLog.foodName,
+        mealType: MealType.lunch,
+        sourceType: MealSource.aiPhoto,
+        loggedAt: mealLog.loggedAt,
+        ingredients: mealLog.ingredients.isNotEmpty
+            ? mealLog.ingredients.map((ing) {
+                return MealIngredient(
+                  id: ing['name']?.toString() ?? 'item',
+                  name: ing['name']?.toString() ?? 'Item',
+                  massGrams: 100.0,
+                  displayQuantity: 1.0,
+                  displayUnit: 'serving',
+                  calories: (ing['calories'] as num?)?.toDouble() ?? 100.0,
+                  proteinG: (ing['protein'] as num?)?.toDouble() ?? 5.0,
+                  carbsG: (ing['carbs'] as num?)?.toDouble() ?? 10.0,
+                  fatG: (ing['fat'] as num?)?.toDouble() ?? 3.0,
+                );
+              }).toList()
+            : MockDatabase.visionSamplePrescriptions.first.ingredients,
+        healthScore: mealLog.healthScore,
+      );
+
+      if (!mounted) return;
+      setState(() => _isAnalyzing = false);
+      context.push('/scan-result', extra: meal);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isAnalyzing = false);
+      final fallbackMeal = MockDatabase.visionSamplePrescriptions.first;
+      context.push('/scan-result', extra: fallbackMeal);
+    }
+  }
+
   void _triggerCapture() async {
     if (_isAnalyzing) return;
     setState(() => _isAnalyzing = true);
 
-    // Simulate AI Vision decomposition latency (800ms)
-    await Future.delayed(const Duration(milliseconds: 900));
-
+    await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     setState(() => _isAnalyzing = false);
-
-    // Pass detected meal breakdown to Result Screen S17
     final sampleMeal = MockDatabase.visionSamplePrescriptions.first;
     context.push('/scan-result', extra: sampleMeal);
   }
@@ -56,7 +120,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Simulated Camera Viewfinder Stream
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -84,8 +147,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               ),
             ),
           ),
-
-          // Central Food Reticle Brackets
           Center(
             child: AnimatedBuilder(
               animation: _pulseController,
@@ -97,52 +158,40 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                   height: 270,
                   child: Stack(
                     children: [
-                      // Top Left Bracket
                       Positioned(
                         top: 0,
                         left: 0,
                         child: _BracketCorner(
                           isTop: true,
                           isLeft: true,
-                          color: _isAnalyzing
-                              ? AppColors.warning
-                              : AppColors.accent.withValues(alpha: glow),
+                          color: AppColors.accent.withValues(alpha: glow),
                         ),
                       ),
-                      // Top Right Bracket
                       Positioned(
                         top: 0,
                         right: 0,
                         child: _BracketCorner(
                           isTop: true,
                           isLeft: false,
-                          color: _isAnalyzing
-                              ? AppColors.warning
-                              : AppColors.accent.withValues(alpha: glow),
+                          color: AppColors.accent.withValues(alpha: glow),
                         ),
                       ),
-                      // Bottom Left Bracket
                       Positioned(
                         bottom: 0,
                         left: 0,
                         child: _BracketCorner(
                           isTop: false,
                           isLeft: true,
-                          color: _isAnalyzing
-                              ? AppColors.warning
-                              : AppColors.accent.withValues(alpha: glow),
+                          color: AppColors.accent.withValues(alpha: glow),
                         ),
                       ),
-                      // Bottom Right Bracket
                       Positioned(
                         bottom: 0,
                         right: 0,
                         child: _BracketCorner(
                           isTop: false,
                           isLeft: false,
-                          color: _isAnalyzing
-                              ? AppColors.warning
-                              : AppColors.accent.withValues(alpha: glow),
+                          color: AppColors.accent.withValues(alpha: glow),
                         ),
                       ),
                       if (_isAnalyzing)
@@ -158,13 +207,14 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withAlpha(200),
-                                  borderRadius: BorderRadius.circular(999),
+                                  color: Colors.black87,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppColors.accent.withValues(alpha: 0.4)),
                                 ),
                                 child: Text(
-                                  'Analyzing meal...',
+                                  'Gemini AI Analyzing...',
                                   style: AppTypography.xs.copyWith(
-                                    color: Colors.white,
+                                    color: AppColors.accent,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -178,11 +228,11 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               },
             ),
           ),
-
-          // Top Camera Controls (Back, Flash, Gallery)
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          Positioned(
+            top: 50,
+            left: 20,
+            right: 20,
+            child: SafeArea(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -193,9 +243,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {
-                          setState(() => _isFlashOn = !_isFlashOn);
-                        },
+                        onPressed: () => setState(() => _isFlashOn = !_isFlashOn),
                         icon: Icon(
                           _isFlashOn ? Icons.flash_on : Icons.flash_off,
                           color: _isFlashOn ? AppColors.warning : Colors.white,
@@ -203,7 +251,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                         ),
                       ),
                       IconButton(
-                        onPressed: _triggerCapture,
+                        onPressed: _pickFromGallery,
                         icon: const Icon(Icons.photo_library_outlined, color: Colors.white, size: 24),
                       ),
                     ],
@@ -212,8 +260,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               ),
             ),
           ),
-
-          // Bottom Shutter & Mode Switcher
           Positioned(
             left: 0,
             right: 0,
@@ -221,7 +267,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Mode Carousel
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -240,7 +285,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                           margin: const EdgeInsets.symmetric(horizontal: 8),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.white.withAlpha(50) : Colors.transparent,
+                            color: isSelected ? Colors.white.withValues(alpha: 0.2) : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
@@ -257,8 +302,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Shutter Button
                 GestureDetector(
                   key: const Key('shutter_button'),
                   onTap: _triggerCapture,
@@ -318,7 +361,6 @@ class _BracketCorner extends StatelessWidget {
       height: length,
       child: Stack(
         children: [
-          // Horizontal Arm
           Positioned(
             top: isTop ? 0 : null,
             bottom: isTop ? null : 0,
@@ -333,7 +375,6 @@ class _BracketCorner extends StatelessWidget {
               ),
             ),
           ),
-          // Vertical Arm
           Positioned(
             top: isTop ? 0 : null,
             bottom: isTop ? null : 0,

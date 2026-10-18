@@ -19,12 +19,11 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
   int _currentStep = 0;
   final int _totalSteps = 8;
 
-  // Form State
   String _goal = 'Lose Weight';
   String _barrier = 'Manual tracking takes too long';
   String _gender = 'Male';
   int _age = 26;
-  int _unitIndex = 0; // 0: Metric, 1: Imperial
+  int _unitIndex = 0; 
   double _heightCm = 180;
   double _currentWeightKg = 78.5;
   double _targetWeightKg = 73.0;
@@ -52,7 +51,6 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
   void _startPlanGeneration() async {
     setState(() => _isGeneratingPlan = true);
 
-    // Save customized profile to Riverpod
     final updatedProfile = ref.read(appStateProvider).profile.copyWith(
           gender: _gender,
           age: _age,
@@ -63,13 +61,11 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
         );
     ref.read(appStateProvider.notifier).updateProfile(updatedProfile);
 
-    // Dynamic anticipation loading animation (1.5s)
     await Future.delayed(const Duration(milliseconds: 1500));
 
     if (!mounted) return;
     setState(() => _isGeneratingPlan = false);
 
-    // Route to Hard Paywall S14
     context.push('/paywall');
   }
 
@@ -149,7 +145,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
                   child: _buildCurrentStep(),
                 ),
               ),
-              if (_currentStep != 7) // Step 7 uses the press & hold pledge button
+              if (_currentStep != 7) 
                 PrimaryButton(
                   label: _currentStep == 0 ? 'Let\'s Get Started' : 'Continue',
                   size: ButtonSize.lg,
@@ -164,7 +160,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
 
   Widget _buildCurrentStep() {
     switch (_currentStep) {
-      case 0: // Welcome & Hook
+      case 0: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -200,7 +196,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 1: // Primary Goal
+      case 1: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -242,7 +238,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 2: // Past Barriers
+      case 2: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -276,7 +272,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 3: // Gender & Age
+      case 3: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -333,7 +329,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 4: // Height & Weight
+      case 4: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -407,7 +403,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 5: // Target Weight & Pace
+      case 5: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -471,7 +467,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 6: // Activity Level
+      case 6: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -505,7 +501,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           ],
         );
 
-      case 7: // Commitment Pledge Contract
+      case 7: 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -525,7 +521,6 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
             ),
             const SizedBox(height: 48),
 
-            // Press and Hold Tactile Commitment Button
             GestureDetector(
               onTapDown: (_) {
                 setState(() => _isHoldCommitting = true);

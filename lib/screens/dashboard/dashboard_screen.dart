@@ -22,7 +22,7 @@ class DashboardScreen extends ConsumerWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // App Bar / Header
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -46,7 +46,7 @@ class DashboardScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    // Streak Pill
+
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
@@ -75,7 +75,6 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Hero Section: Calorie Budget Ring
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -135,7 +134,6 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Daily Macros Card
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -180,13 +178,12 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Quick Trackers (Water & Fasting)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
-                    // Hydration Card
+
                     Expanded(
                       child: GestureDetector(
                         onTap: () => context.push('/water'),
@@ -242,7 +239,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Intermittent Fasting Card
+
                     Expanded(
                       child: GestureDetector(
                         onTap: () => context.push('/fasting'),
@@ -297,7 +294,6 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Meal Categories List
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
@@ -323,7 +319,6 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Render Meal Groups (Breakfast, Lunch, Dinner, Snack)
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -342,7 +337,6 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Bottom padding for navigation bar
             const SliverToBoxAdapter(
               child: SizedBox(height: 90),
             ),

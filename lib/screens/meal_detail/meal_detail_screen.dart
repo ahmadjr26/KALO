@@ -86,7 +86,7 @@ class MealDetailScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Nutrition Summary Card
+
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -141,7 +141,6 @@ class MealDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              // Itemized Ingredients
               Text(
                 'Ingredients & Portions',
                 style: AppTypography.md.copyWith(fontWeight: FontWeight.w800),

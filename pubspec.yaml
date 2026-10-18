@@ -39,6 +39,11 @@ dependencies:
   google_fonts: ^9.0.0
   uuid: ^4.6.0
   intl: ^0.20.3
+  supabase_flutter: ^2.18.3
+  http: ^1.6.0
+  image_picker: ^1.2.4
+  shared_preferences: ^2.5.6
+  flutter_local_notifications: ^22.3.2
 
 dev_dependencies:
   flutter_test:

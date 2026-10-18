@@ -35,7 +35,7 @@ class HydrationScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Water Gauge Graphic
+
                     Container(
                       width: 180,
                       height: 180,
@@ -74,7 +74,6 @@ class HydrationScreen extends ConsumerWidget {
                 ),
               ),
 
-              // Quick Add Presets
               Row(
                 children: [
                   _PresetButton(

@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/mock_database.dart';
 import '../models/meal.dart';
+import '../models/meal_ingredient.dart';
+import '../models/meal_log.dart';
 import '../models/user_profile.dart';
+import '../services/supabase_service.dart';
 
 class AppState {
   final UserProfile profile;
@@ -64,8 +67,70 @@ class AppStateNotifier extends Notifier<AppState> {
     );
   }
 
+  Future<void> syncFromSupabase() async {
+    try {
+      final supa = SupabaseService.instance;
+      if (supa.currentUserId == null) return;
+
+      final cloudLogs = await supa.getMealLogs();
+      if (cloudLogs.isNotEmpty) {
+        final List<Meal> convertedMeals = cloudLogs.map((log) {
+          final ingredients = log.ingredients.map((ing) {
+            return MealIngredient(
+              id: ing['name']?.toString() ?? 'item',
+              name: ing['name']?.toString() ?? 'Item',
+              massGrams: 100.0,
+              displayQuantity: 1.0,
+              displayUnit: 'serving',
+              calories: (ing['calories'] as num?)?.toDouble() ?? 100.0,
+              proteinG: (ing['protein'] as num?)?.toDouble() ?? 5.0,
+              carbsG: (ing['carbs'] as num?)?.toDouble() ?? 10.0,
+              fatG: (ing['fat'] as num?)?.toDouble() ?? 3.0,
+            );
+          }).toList();
+
+          return Meal(
+            id: log.id,
+            dishName: log.foodName,
+            mealType: MealType.lunch,
+            sourceType: MealSource.aiPhoto,
+            loggedAt: log.loggedAt,
+            ingredients: ingredients,
+            healthScore: log.healthScore,
+          );
+        }).toList();
+
+        state = state.copyWith(meals: convertedMeals);
+      }
+    } catch (_) {}
+  }
+
   void addMeal(Meal meal) {
     state = state.copyWith(meals: [meal, ...state.meals]);
+    try {
+      final mealLog = MealLog(
+        id: meal.id,
+        userId: SupabaseService.instance.currentUserId ?? '',
+        foodName: meal.dishName,
+        totalCalories: meal.totalCalories.toInt(),
+        protein: meal.totalProtein,
+        carbs: meal.totalCarbs,
+        fat: meal.totalFat,
+        healthScore: meal.healthScore,
+        ingredients: meal.ingredients
+            .map((i) => {
+                  'name': i.name,
+                  'portion': '${i.massGrams}g',
+                  'calories': i.calories.toInt(),
+                  'protein': i.proteinG,
+                  'carbs': i.carbsG,
+                  'fat': i.fatG,
+                })
+            .toList(),
+        loggedAt: meal.loggedAt,
+      );
+      SupabaseService.instance.insertMealLog(mealLog);
+    } catch (_) {}
   }
 
   void updateMeal(Meal updatedMeal) {
@@ -78,6 +143,9 @@ class AppStateNotifier extends Notifier<AppState> {
   void deleteMeal(String mealId) {
     final updatedList = state.meals.where((m) => m.id != mealId).toList();
     state = state.copyWith(meals: updatedList);
+    try {
+      SupabaseService.instance.deleteMealLog(mealId);
+    } catch (_) {}
   }
 
   void addWater(int ml) {
@@ -99,4 +167,3 @@ class AppStateNotifier extends Notifier<AppState> {
 }
 
 final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(AppStateNotifier.new);
-

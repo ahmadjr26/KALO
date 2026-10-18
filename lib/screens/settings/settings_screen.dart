@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/config/app_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../providers/app_state_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -12,7 +14,10 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(appStateProvider);
+    final authState = ref.watch(authProvider);
     final profile = state.profile;
+    final userEmail = authState.user?.email ?? profile.email;
+    final isSignedIn = authState.user != null;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -29,7 +34,6 @@ class SettingsScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // User Card
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -48,7 +52,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       child: Center(
                         child: Text(
-                          profile.name[0],
+                          userEmail.isNotEmpty ? userEmail[0].toUpperCase() : 'K',
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w900,
@@ -63,17 +67,17 @@ class SettingsScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            profile.name,
+                            isSignedIn ? 'Supabase Account' : profile.name,
                             style: AppTypography.base.copyWith(fontWeight: FontWeight.w800),
                           ),
-                          Text(profile.email, style: AppTypography.xs),
+                          Text(userEmail, style: AppTypography.xs),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               const Icon(Icons.verified, size: 14, color: AppColors.accent),
                               const SizedBox(width: 4),
                               Text(
-                                'Cal AI Unlimited Member',
+                                '${AppConfig.appName} Cloud Sync Active',
                                 style: AppTypography.xs.copyWith(
                                   color: AppColors.accent,
                                   fontWeight: FontWeight.w700,
@@ -87,8 +91,31 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              if (!isSignedIn)
+                PrimaryButton(
+                  label: 'Sign In / Create Account',
+                  icon: Icons.login,
+                  onPressed: () => context.push('/auth'),
+                )
+              else
+                PrimaryButton(
+                  label: 'Sign Out (${authState.user!.email})',
+                  variant: ButtonVariant.ghost,
+                  size: ButtonSize.sm,
+                  icon: Icons.logout,
+                  onPressed: () async {
+                    await ref.read(authProvider.notifier).signOut();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Signed out successfully'),
+                        ),
+                      );
+                    }
+                  },
+                ),
               const SizedBox(height: 24),
-
               Text('Daily Nutrition Targets', style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800)),
               const SizedBox(height: 12),
               Container(
@@ -112,7 +139,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     const Divider(height: 1),
                     _SettingsRow(
-                      label: 'Carbohydrates Target',
+                      label: 'Carbs Target',
                       value: '${profile.carbsTargetG}g',
                       onTap: () {},
                     ),
@@ -126,7 +153,6 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 24),
-
               Text('Preferences', style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800)),
               const SizedBox(height: 12),
               Container(
@@ -158,7 +184,6 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 32),
-
               PrimaryButton(
                 label: 'Run Onboarding Questionnaire',
                 variant: ButtonVariant.secondary,

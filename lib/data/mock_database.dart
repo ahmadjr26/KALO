@@ -122,7 +122,6 @@ abstract final class MockDatabase {
     ),
   ];
 
-  /// AI Vision Simulation Samples for testing photo food scan
   static List<Meal> visionSamplePrescriptions = [
     Meal(
       id: 'sample-1',

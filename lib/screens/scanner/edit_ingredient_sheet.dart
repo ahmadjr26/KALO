@@ -52,7 +52,7 @@ class _EditIngredientSheetState extends State<EditIngredientSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag handle
+
           Container(
             width: 40,
             height: 4,
@@ -63,7 +63,6 @@ class _EditIngredientSheetState extends State<EditIngredientSheet> {
           ),
           const SizedBox(height: 18),
 
-          // Title
           Text(
             'Adjust Portion',
             style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),
@@ -75,7 +74,6 @@ class _EditIngredientSheetState extends State<EditIngredientSheet> {
           ),
           const SizedBox(height: 24),
 
-          // Stepper & Quantity Display
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -111,7 +109,6 @@ class _EditIngredientSheetState extends State<EditIngredientSheet> {
           ),
           const SizedBox(height: 20),
 
-          // Recalculated Macros Preview
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -139,7 +136,6 @@ class _EditIngredientSheetState extends State<EditIngredientSheet> {
           ),
           const SizedBox(height: 28),
 
-          // Action Buttons
           Row(
             children: [
               Expanded(

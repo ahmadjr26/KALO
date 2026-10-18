@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../models/meal.dart';
+import '../screens/auth/auth_screen.dart';
 import '../screens/meal_detail/meal_detail_screen.dart';
 import '../screens/onboarding/onboarding_flow_screen.dart';
 import '../screens/onboarding/paywall_screen.dart';
@@ -16,6 +17,10 @@ import '../screens/trackers/hydration_screen.dart';
 final appRouter = GoRouter(
   initialLocation: '/dashboard',
   routes: [
+    GoRoute(
+      path: '/auth',
+      builder: (context, state) => const AuthScreen(),
+    ),
     GoRoute(
       path: '/dashboard',
       builder: (context, state) => const MainScaffold(),

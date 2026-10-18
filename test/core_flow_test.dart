@@ -17,40 +17,33 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 1. Initial State: Check initial Remaining Calories
     expect(find.text("TODAY'S NUTRITION"), findsOneWidget);
 
-    // 2. Tap Floating Action Button (Camera)
     final fabFinder = find.byType(FloatingActionButton);
     expect(fabFinder, findsOneWidget);
     await tester.tap(fabFinder);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    // Verify Camera Scanner Screen is open
     expect(find.text('AI Vision Camera Active'), findsOneWidget);
     expect(find.text('Food Scan'), findsOneWidget);
 
-    // 3. Trigger Photo Capture (Simulate scanning a plate)
     final shutterFinder = find.byKey(const Key('shutter_button'));
     expect(shutterFinder, findsOneWidget);
     await tester.tap(shutterFinder);
-    await tester.pump(); // Start simulation
+    await tester.pump();
 
-    // Wait for the simulated AI vision scan latency (900ms)
     await tester.pump(const Duration(milliseconds: 1000));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
-    // Verify Scan Result Screen S17
     expect(find.text('Meal Breakdown'), findsOneWidget);
     expect(find.text('Herb-Roasted Chicken Breast with Broccoli'), findsOneWidget);
     expect(find.text('Confirm & Log Meal'), findsOneWidget);
 
-    // 4. Confirm and Log the Meal
     await tester.tap(find.text('Confirm & Log Meal'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
-    // 5. Back on Dashboard S15, meal should now be visible in list
     expect(find.text("TODAY'S NUTRITION"), findsOneWidget);
     final mealFinder = find.text('Herb-Roasted Chicken Breast with Broccoli');
     await tester.scrollUntilVisible(mealFinder, 300);

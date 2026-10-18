@@ -56,7 +56,6 @@ class MealIngredient {
     );
   }
 
-  /// Recalculates nutritional values when quantity changes
   MealIngredient scale(double newQuantity) {
     if (displayQuantity <= 0) return this;
     final double ratio = newQuantity / displayQuantity;

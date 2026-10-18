@@ -38,7 +38,6 @@ class AnalyticsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Weekly Bar Chart
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -93,7 +92,6 @@ class AnalyticsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Macro Distribution Breakdown
               Text(
                 'Macro Balance Breakdown',
                 style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),

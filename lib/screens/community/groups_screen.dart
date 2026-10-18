@@ -31,7 +31,7 @@ class GroupsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Active Group Card
+
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(

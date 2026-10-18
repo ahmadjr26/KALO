@@ -108,7 +108,6 @@ class _VoiceLogScreenState extends State<VoiceLogScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    // Voice Waveform Trigger
                     GestureDetector(
                       onTap: () {
                         setState(() => _isListening = !_isListening);
@@ -141,7 +140,6 @@ class _VoiceLogScreenState extends State<VoiceLogScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    // Editable Transcript Text Box
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(

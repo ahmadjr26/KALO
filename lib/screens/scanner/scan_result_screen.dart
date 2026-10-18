@@ -53,7 +53,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
     final finalizedMeal = _currentMeal.copyWith(mealType: _selectedMealType);
     ref.read(appStateProvider.notifier).addMeal(finalizedMeal);
 
-    // Show confirmation feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: AppColors.surfaceElevated,
@@ -75,7 +74,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
       ),
     );
 
-    // Return to dashboard
     context.go('/dashboard');
   }
 
@@ -135,7 +133,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Dish Title & AI Confidence
+
                     Text(
                       _currentMeal.dishName,
                       style: AppTypography.xl.copyWith(fontWeight: FontWeight.w800),
@@ -153,7 +151,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Nutrition Scoreboard Hero
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -182,7 +179,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              // Health Score Badge
+
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                 decoration: BoxDecoration(
@@ -239,7 +236,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Health Factor Breakdown
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -265,7 +261,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Itemized Ingredients List Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -286,7 +281,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Ingredients Items
                     ..._currentMeal.ingredients.asMap().entries.map((entry) {
                       final int index = entry.key;
                       final MealIngredient item = entry.value;
@@ -352,7 +346,6 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
               ),
             ),
 
-            // Sticky Bottom CTA
             Padding(
               padding: const EdgeInsets.all(20),
               child: PrimaryButton(

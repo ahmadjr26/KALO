@@ -148,7 +148,7 @@ class _FoodSearchScreenState extends ConsumerState<FoodSearchScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              // Search Input Field
+
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(

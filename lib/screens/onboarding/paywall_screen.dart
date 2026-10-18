@@ -15,10 +15,10 @@ class PaywallScreen extends ConsumerStatefulWidget {
 }
 
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
-  int _selectedPlan = 0; // 0: Annual (3-Day Free Trial), 1: Monthly
+  int _selectedPlan = 0; 
 
   void _onDismissAttempt() {
-    // Show exit-intent discount roulette wheel
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -27,7 +27,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   void _subscribe() {
-    // Activate subscription in state
+
     final current = ref.read(appStateProvider).profile;
     ref.read(appStateProvider.notifier).updateProfile(
           current.copyWith(isSubscribed: true),
@@ -55,7 +55,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              // Restore Purchases
+
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Purchases restored successfully.')),
               );
@@ -102,7 +102,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Feature Bullet Points
                       _FeatureBullet(
                         icon: Icons.camera_alt_outlined,
                         title: 'Unlimited AI Photo Scanning',
@@ -128,7 +127,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                       const SizedBox(height: 32),
 
-                      // Annual Plan Card (Featured)
                       GestureDetector(
                         onTap: () => setState(() => _selectedPlan = 0),
                         child: AnimatedContainer(
@@ -210,7 +208,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Monthly Plan Card
                       GestureDetector(
                         onTap: () => setState(() => _selectedPlan = 1),
                         child: AnimatedContainer(
@@ -337,7 +334,6 @@ class _FeatureBullet extends StatelessWidget {
   }
 }
 
-/// Exit-intent Discount Roulette Wheel Dialog
 class _DiscountWheelDialog extends StatefulWidget {
   const _DiscountWheelDialog();
 
@@ -422,7 +418,6 @@ class _DiscountWheelDialogState extends State<_DiscountWheelDialog>
             ),
             const SizedBox(height: 24),
 
-            // Animated Roulette Wheel
             AnimatedBuilder(
               animation: _spinController,
               builder: (context, child) {

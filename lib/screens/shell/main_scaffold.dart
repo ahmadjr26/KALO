@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../analytics/analytics_screen.dart';
 import '../community/groups_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../settings/settings_screen.dart';
 
-class MainScaffold extends StatefulWidget {
+class MainScaffold extends ConsumerStatefulWidget {
   const MainScaffold({super.key});
 
   @override
-  State<MainScaffold> createState() => _MainScaffoldState();
+  ConsumerState<MainScaffold> createState() => _MainScaffoldState();
 }
 
-class _MainScaffoldState extends State<MainScaffold> {
+class _MainScaffoldState extends ConsumerState<MainScaffold> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
@@ -25,6 +27,9 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = ref.watch(localeProvider);
+    final isAr = lang == AppLanguage.arabic;
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: IndexedStack(
@@ -75,26 +80,26 @@ class _MainScaffoldState extends State<MainScaffold> {
           unselectedItemColor: AppColors.textMuted,
           selectedFontSize: 11,
           unselectedFontSize: 11,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Today',
+              icon: const Icon(Icons.home_outlined),
+              activeIcon: const Icon(Icons.home),
+              label: isAr ? 'اليوم' : 'Today',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_outlined),
-              activeIcon: Icon(Icons.bar_chart),
-              label: 'Trends',
+              icon: const Icon(Icons.bar_chart_outlined),
+              activeIcon: const Icon(Icons.bar_chart),
+              label: isAr ? 'الإحصائيات' : 'Trends',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.groups_outlined),
-              activeIcon: Icon(Icons.groups),
-              label: 'Community',
+              icon: const Icon(Icons.groups_outlined),
+              activeIcon: const Icon(Icons.groups),
+              label: isAr ? 'المجتمع' : 'Community',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings),
-              label: 'Profile',
+              icon: const Icon(Icons.settings_outlined),
+              activeIcon: const Icon(Icons.settings),
+              label: isAr ? 'الإعدادات' : 'Settings',
             ),
           ],
         ),

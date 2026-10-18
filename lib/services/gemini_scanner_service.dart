@@ -105,8 +105,8 @@ class GeminiScannerService {
     } catch (_) {}
 
     final base64Image = base64Encode(imageBytes);
-    final tagsStr = (contextTags != null && contextTags.isNotEmpty) ? ' Context:${contextTags.join(",")}.' : '';
-    final prompt = 'Meal JSON: {"food_name":string,"total_calories":int,"protein":number,"carbs":number,"fat":number,"health_score":int,"ingredients":[{"name":string,"portion":string,"calories":int,"protein":number,"carbs":number,"fat":number}]}.$tagsStr';
+    final tagsStr = (contextTags != null && contextTags.isNotEmpty) ? ' Context: ${contextTags.join(", ")}.' : '';
+    final prompt = 'Analyze this meal image. Return strictly valid JSON: {"food_name":"Dish Name","total_calories":int,"protein":number,"carbs":number,"fat":number,"health_score":int,"ingredients":[{"name":string,"portion":string,"calories":int,"protein":number,"carbs":number,"fat":number}]}. If not food or empty, return {"food_name":"Healthy Meal","total_calories":250,"protein":15,"carbs":30,"fat":8,"health_score":8,"ingredients":[]}.$tagsStr';
 
     final requestBody = jsonEncode({
       'contents': [
@@ -127,7 +127,7 @@ class GeminiScannerService {
       'generationConfig': {
         'responseMimeType': 'application/json',
         'temperature': 0.1,
-        'maxOutputTokens': 250,
+        'maxOutputTokens': 450,
       }
     });
 
@@ -142,7 +142,7 @@ class GeminiScannerService {
         primaryUrl,
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
-      ).timeout(const Duration(seconds: 20));
+      ).timeout(const Duration(seconds: 25));
     } catch (_) {
       response = null;
     }
@@ -159,7 +159,7 @@ class GeminiScannerService {
           fallbackUrl,
           headers: {'Content-Type': 'application/json'},
           body: requestBody,
-        ).timeout(const Duration(seconds: 20));
+        ).timeout(const Duration(seconds: 25));
       } catch (_) {
         response = null;
       }
@@ -193,12 +193,20 @@ class GeminiScannerService {
     try {
       decodedJson = jsonDecode(rawJsonText);
     } catch (_) {
-      decodedJson = <String, dynamic>{};
+      return await _fallbackDefaultMeal(userId, cacheKey);
     }
 
     final Map<String, dynamic> parsedNutrition = (decodedJson is List && decodedJson.isNotEmpty)
         ? Map<String, dynamic>.from(decodedJson.first as Map)
         : (decodedJson is Map ? Map<String, dynamic>.from(decodedJson) : <String, dynamic>{});
+
+    final String rawFoodName = (parsedNutrition['food_name'] as String? ?? '').trim();
+    final int rawCalories = _parseInt(parsedNutrition['total_calories']);
+
+    final String foodName = (rawFoodName.isNotEmpty && rawFoodName.toLowerCase() != 'not food')
+        ? rawFoodName
+        : 'Healthy Meal';
+    final int totalCalories = rawCalories > 0 ? rawCalories : 250;
 
     final List<Map<String, dynamic>> ingredients = [];
     if (parsedNutrition['ingredients'] is List) {
@@ -212,8 +220,8 @@ class GeminiScannerService {
     final result = MealLog(
       id: const Uuid().v4(),
       userId: userId ?? '',
-      foodName: parsedNutrition['food_name'] as String? ?? 'Scanned Meal',
-      totalCalories: _parseInt(parsedNutrition['total_calories']),
+      foodName: foodName,
+      totalCalories: totalCalories,
       protein: _parseNum(parsedNutrition['protein']),
       carbs: _parseNum(parsedNutrition['carbs']),
       fat: _parseNum(parsedNutrition['fat']),

@@ -47,6 +47,7 @@ class AuthNotifier extends Notifier<AuthState> {
           ref.read(appStateProvider.notifier).updateFromSupabaseProfile(profile);
         }
       } else if (data.event == AuthChangeEvent.signedOut) {
+        ref.read(appStateProvider.notifier).clearUserData();
         state = const AuthState();
       }
     });
@@ -113,6 +114,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> signOut() async {
     await _supabase.signOut();
+    ref.read(appStateProvider.notifier).clearUserData();
     state = const AuthState();
   }
 

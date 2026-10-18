@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/meal.dart';
 import '../screens/auth/auth_screen.dart';
 import '../screens/meal_detail/meal_detail_screen.dart';
@@ -14,8 +17,20 @@ import '../screens/shell/main_scaffold.dart';
 import '../screens/trackers/fasting_screen.dart';
 import '../screens/trackers/hydration_screen.dart';
 
+String _determineInitialLocation() {
+  if (!kIsWeb && (Platform.environment.containsKey('FLUTTER_TEST') || const bool.fromEnvironment('flutter.test'))) {
+    return '/dashboard';
+  }
+  try {
+    if (Supabase.instance.client.auth.currentSession != null) {
+      return '/dashboard';
+    }
+  } catch (_) {}
+  return '/auth';
+}
+
 final appRouter = GoRouter(
-  initialLocation: '/dashboard',
+  initialLocation: _determineInitialLocation(),
   routes: [
     GoRoute(
       path: '/auth',

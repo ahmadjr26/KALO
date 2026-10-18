@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_database.dart';
 import '../models/meal.dart';
 import '../models/meal_ingredient.dart';
 import '../models/meal_log.dart';
@@ -17,8 +16,8 @@ class AppState {
   const AppState({
     required this.profile,
     required this.meals,
-    this.waterIntakeMl = 1500,
-    this.isFasting = true,
+    this.waterIntakeMl = 0,
+    this.isFasting = false,
     this.fastStartTime,
   });
 
@@ -59,19 +58,27 @@ class AppState {
 class AppStateNotifier extends Notifier<AppState> {
   @override
   AppState build() {
-    return AppState(
-      profile: MockDatabase.seedProfile,
-      meals: List.from(MockDatabase.seedMeals),
-      waterIntakeMl: 1500,
-      isFasting: true,
-      fastStartTime: DateTime.now().subtract(const Duration(hours: 13, minutes: 24)),
+    final initialState = const AppState(
+      profile: UserProfile.defaultUser,
+      meals: [],
+      waterIntakeMl: 0,
+      isFasting: false,
+      fastStartTime: null,
     );
+    Future.microtask(() => syncFromSupabase());
+    return initialState;
   }
 
   Future<void> syncFromSupabase() async {
     try {
       final supa = SupabaseService.instance;
-      if (supa.currentUserId == null) return;
+      final userId = supa.currentUserId;
+      if (userId == null) return;
+
+      final cloudProfile = await supa.getProfile(userId);
+      if (cloudProfile != null) {
+        updateFromSupabaseProfile(cloudProfile);
+      }
 
       final cloudLogs = await supa.getMealLogs();
       if (cloudLogs.isNotEmpty) {
@@ -178,6 +185,16 @@ class AppStateNotifier extends Notifier<AppState> {
     } else {
       state = state.copyWith(isFasting: true, fastStartTime: DateTime.now());
     }
+  }
+
+  void clearUserData() {
+    state = const AppState(
+      profile: UserProfile.defaultUser,
+      meals: [],
+      waterIntakeMl: 0,
+      isFasting: false,
+      fastStartTime: null,
+    );
   }
 }
 

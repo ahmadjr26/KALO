@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/calorie_ring.dart';
@@ -16,6 +17,9 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(appStateProvider);
     final authState = ref.watch(authProvider);
+    final currentLang = ref.watch(localeProvider);
+    final isAr = currentLang == AppLanguage.arabic;
+
     final baseProfile = state.profile;
     final profile = authState.profile != null
         ? baseProfile.copyWith(
@@ -26,37 +30,45 @@ class DashboardScreen extends ConsumerWidget {
           )
         : baseProfile;
 
+    final rawEmail = authState.user?.email ?? '';
+    final displayName = rawEmail.isNotEmpty
+        ? rawEmail.split('@').first
+        : AppStrings.get('champion', currentLang);
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Hey, ${profile.name.split(' ').first} 👋',
-                          style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'TODAY\'S NUTRITION',
-                          style: AppTypography.xs.copyWith(
-                            letterSpacing: 0.8,
-                            fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${AppStrings.get('hey', currentLang)}, $displayName 👋',
+                            style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 2),
+                          Text(
+                            AppStrings.get('today_nutrition', currentLang),
+                            style: AppTypography.xs.copyWith(
+                              letterSpacing: 0.8,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
@@ -70,7 +82,7 @@ class DashboardScreen extends ConsumerWidget {
                           const Text('🔥', style: TextStyle(fontSize: 14)),
                           const SizedBox(width: 6),
                           Text(
-                            '${profile.currentStreak} DAYS',
+                            '${profile.currentStreak} ${AppStrings.get('days_streak', currentLang)}',
                             style: AppTypography.xs.copyWith(
                               color: AppColors.warning,
                               fontWeight: FontWeight.w800,
@@ -84,7 +96,6 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -98,7 +109,7 @@ class DashboardScreen extends ConsumerWidget {
                       center: Alignment.center,
                       radius: 0.85,
                       colors: [
-                        AppColors.accent.withAlpha(20),
+                        AppColors.accent.withValues(alpha: 0.08),
                         AppColors.surface,
                       ],
                     ),
@@ -114,26 +125,26 @@ class DashboardScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: _MetricStat(
-                              label: 'Budget',
+                              label: AppStrings.get('budget', currentLang),
                               value: '${profile.calorieBudget}',
-                              unit: 'kcal',
+                              unit: AppStrings.get('kcal', currentLang),
                             ),
                           ),
                           Container(width: 1, height: 28, color: AppColors.border),
                           Expanded(
                             child: _MetricStat(
-                              label: 'Consumed',
+                              label: AppStrings.get('consumed', currentLang),
                               value: '${state.totalCaloriesConsumed.toInt()}',
-                              unit: 'kcal',
+                              unit: AppStrings.get('kcal', currentLang),
                               color: AppColors.accent,
                             ),
                           ),
                           Container(width: 1, height: 28, color: AppColors.border),
                           Expanded(
                             child: _MetricStat(
-                              label: 'Remaining',
+                              label: AppStrings.get('remaining', currentLang),
                               value: '${state.remainingCalories}',
-                              unit: 'kcal',
+                              unit: AppStrings.get('kcal', currentLang),
                             ),
                           ),
                         ],
@@ -143,7 +154,6 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -158,26 +168,26 @@ class DashboardScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Daily Macronutrients',
+                        isAr ? 'الماكروز اليومية' : 'Daily Macronutrients',
                         style: AppTypography.base.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: 16),
                       MacroProgressBar(
-                        label: 'Protein',
+                        label: AppStrings.get('protein', currentLang),
                         currentGrams: state.totalProteinConsumed,
                         targetGrams: profile.proteinTargetG.toDouble(),
                         color: AppColors.protein,
                       ),
                       const SizedBox(height: 14),
                       MacroProgressBar(
-                        label: 'Carbohydrates',
+                        label: AppStrings.get('carbs', currentLang),
                         currentGrams: state.totalCarbsConsumed,
                         targetGrams: profile.carbsTargetG.toDouble(),
                         color: AppColors.carbs,
                       ),
                       const SizedBox(height: 14),
                       MacroProgressBar(
-                        label: 'Healthy Fats',
+                        label: AppStrings.get('fat', currentLang),
                         currentGrams: state.totalFatConsumed,
                         targetGrams: profile.fatTargetG.toDouble(),
                         color: AppColors.fat,
@@ -187,13 +197,11 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
-
                     Expanded(
                       child: GestureDetector(
                         onTap: () => context.push('/water'),
@@ -218,7 +226,7 @@ class DashboardScreen extends ConsumerWidget {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppColors.water.withAlpha(30),
+                                        color: AppColors.water.withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(999),
                                       ),
                                       child: const Text(
@@ -240,7 +248,7 @@ class DashboardScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'of ${profile.waterTargetMl}ml target',
+                                '${isAr ? 'من هدف' : 'of'} ${profile.waterTargetMl}ml',
                                 style: AppTypography.xs,
                               ),
                             ],
@@ -249,7 +257,6 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-
                     Expanded(
                       child: GestureDetector(
                         onTap: () => context.push('/fasting'),
@@ -270,7 +277,7 @@ class DashboardScreen extends ConsumerWidget {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: AppColors.warning.withAlpha(30),
+                                      color: AppColors.warning.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: const Text(
@@ -286,12 +293,16 @@ class DashboardScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                state.isFasting ? '13h 24m' : 'Eating Window',
+                                state.isFasting
+                                    ? (isAr ? 'صيام جارٍ' : 'Fasting')
+                                    : (isAr ? 'نافذة الأكل' : 'Eating Window'),
                                 style: AppTypography.md.copyWith(fontWeight: FontWeight.w800),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                state.isFasting ? 'Fat Burning Stage' : 'Fast Complete',
+                                state.isFasting
+                                    ? (isAr ? 'مرحلة حرق الدهون' : 'Fat Burning Stage')
+                                    : (isAr ? 'اكتمل الصيام' : 'Fast Complete'),
                                 style: AppTypography.xs,
                               ),
                             ],
@@ -303,21 +314,24 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Today\'s Meals',
-                      style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),
+                    Expanded(
+                      child: Text(
+                        AppStrings.get('logged_meals', currentLang),
+                        style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () => context.push('/food-search'),
                       child: Text(
-                        'Database Search',
+                        isAr ? 'البحث اليدوي' : 'Database Search',
                         style: AppTypography.xs.copyWith(
                           color: AppColors.accent,
                           fontWeight: FontWeight.w700,
@@ -328,25 +342,92 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (state.meals.isEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Container(
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 58,
+                          height: 58,
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.camera_alt_outlined, size: 28, color: AppColors.accent),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppStrings.get('no_meals_today', currentLang),
+                          style: const TextStyle(
+                            color: AppColors.text,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          AppStrings.get('start_tracking_hint', currentLang),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: () => context.push('/scanner'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          icon: const Icon(Icons.bolt, size: 18),
+                          label: Text(
+                            AppStrings.get('scan_meal_button', currentLang),
+                            style: const TextStyle(fontWeight: FontWeight.w900),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final mealType = MealType.values[index];
+                    final mealsInGroup = state.meals
+                        .where((m) => m.mealType == mealType)
+                        .toList();
 
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final mealType = MealType.values[index];
-                  final mealsInGroup = state.meals
-                      .where((m) => m.mealType == mealType)
-                      .toList();
-
-                  return _MealGroupTile(
-                    mealType: mealType,
-                    meals: mealsInGroup,
-                    onAddTap: () => context.push('/scanner'),
-                  );
-                },
-                childCount: MealType.values.length,
+                    return _MealGroupTile(
+                      mealType: mealType,
+                      meals: mealsInGroup,
+                      currentLang: currentLang,
+                      onAddTap: () => context.push('/scanner'),
+                      onDeleteMeal: (mealId) {
+                        ref.read(appStateProvider.notifier).deleteMeal(mealId);
+                      },
+                    );
+                  },
+                  childCount: MealType.values.length,
+                ),
               ),
-            ),
-
             const SliverToBoxAdapter(
               child: SizedBox(height: 90),
             ),
@@ -395,16 +476,35 @@ class _MetricStat extends StatelessWidget {
 class _MealGroupTile extends StatelessWidget {
   final MealType mealType;
   final List<Meal> meals;
+  final AppLanguage currentLang;
   final VoidCallback onAddTap;
+  final Function(String) onDeleteMeal;
 
   const _MealGroupTile({
     required this.mealType,
     required this.meals,
+    required this.currentLang,
     required this.onAddTap,
+    required this.onDeleteMeal,
   });
+
+  String _getMealTypeLabel(MealType type, bool isAr) {
+    if (!isAr) return type.label;
+    switch (type) {
+      case MealType.breakfast:
+        return 'الفطور';
+      case MealType.lunch:
+        return 'الغداء';
+      case MealType.dinner:
+        return 'العشاء';
+      case MealType.snack:
+        return 'سناك وخفايف';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isAr = currentLang == AppLanguage.arabic;
     final double groupCalories =
         meals.fold(0.0, (sum, m) => sum + m.totalCalories);
 
@@ -426,13 +526,13 @@ class _MealGroupTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        mealType.label,
+                        _getMealTypeLabel(mealType, isAr),
                         style: AppTypography.base.copyWith(fontWeight: FontWeight.w700),
                       ),
                       if (groupCalories > 0) ...[
                         const SizedBox(width: 8),
                         Text(
-                          '${groupCalories.toInt()} kcal',
+                          '${groupCalories.toInt()} ${AppStrings.get('kcal', currentLang)}',
                           style: AppTypography.sm.copyWith(
                             color: AppColors.accent,
                             fontWeight: FontWeight.w600,
@@ -456,8 +556,8 @@ class _MealGroupTile extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      'No meals logged yet',
-                      style: AppTypography.xs.copyWith(color: AppColors.textMuted.withAlpha(160)),
+                      isAr ? 'لم تسجل وجبة بعد' : 'No meals logged yet',
+                      style: AppTypography.xs.copyWith(color: AppColors.textMuted.withValues(alpha: 0.6)),
                     ),
                   ],
                 ),
@@ -499,8 +599,47 @@ class _MealGroupTile extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${meal.totalCalories.toInt()} kcal',
+                            '${meal.totalCalories.toInt()} ${AppStrings.get('kcal', currentLang)}',
                             style: AppTypography.sm.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.textMuted),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  backgroundColor: AppColors.surface,
+                                  title: Text(
+                                    AppStrings.get('delete_meal', currentLang),
+                                    style: const TextStyle(color: AppColors.text),
+                                  ),
+                                  content: Text(
+                                    AppStrings.get('delete_meal_confirm', currentLang),
+                                    style: const TextStyle(color: AppColors.textMuted),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx),
+                                      child: Text(
+                                        AppStrings.get('cancel', currentLang),
+                                        style: const TextStyle(color: AppColors.textMuted),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(ctx);
+                                        onDeleteMeal(meal.id);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.danger,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: Text(AppStrings.get('confirm', currentLang)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

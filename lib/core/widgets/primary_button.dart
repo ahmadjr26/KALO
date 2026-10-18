@@ -55,7 +55,9 @@ class PrimaryButton extends StatelessWidget {
       _ => BorderSide.none,
     };
 
-    return SizedBox(
+    final isPrimary = variant == ButtonVariant.primary && onPressed != null && !isLoading;
+
+    final Widget buttonWidget = SizedBox(
       height: height,
       child: Material(
         color: onPressed == null || isLoading ? bgColor.withAlpha(120) : bgColor,
@@ -101,5 +103,23 @@ class PrimaryButton extends StatelessWidget {
         ),
       ),
     );
+
+    if (isPrimary) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accent.withValues(alpha: 0.25),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: buttonWidget,
+      );
+    }
+
+    return buttonWidget;
   }
 }

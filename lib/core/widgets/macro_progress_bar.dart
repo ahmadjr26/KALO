@@ -51,7 +51,7 @@ class MacroProgressBar extends StatelessWidget {
             width: double.infinity,
             color: AppColors.border,
             child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               widthFactor: progress,
               child: Container(
                 decoration: BoxDecoration(

@@ -7,6 +7,7 @@ import '../../core/widgets/calorie_ring.dart';
 import '../../core/widgets/macro_progress_bar.dart';
 import '../../models/meal.dart';
 import '../../providers/app_state_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -14,7 +15,16 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(appStateProvider);
-    final profile = state.profile;
+    final authState = ref.watch(authProvider);
+    final baseProfile = state.profile;
+    final profile = authState.profile != null
+        ? baseProfile.copyWith(
+            calorieBudget: authState.profile!.dailyCalories,
+            proteinTargetG: authState.profile!.dailyProtein.round(),
+            carbsTargetG: authState.profile!.dailyCarbs.round(),
+            fatTargetG: authState.profile!.dailyFat.round(),
+          )
+        : baseProfile;
 
     return Scaffold(
       backgroundColor: AppColors.bg,

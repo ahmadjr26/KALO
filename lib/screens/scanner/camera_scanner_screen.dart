@@ -47,15 +47,32 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     try {
       final XFile? file = await _picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 65,
+      ).timeout(const Duration(milliseconds: 200), onTimeout: () => null);
       if (file != null) {
         final bytes = await file.readAsBytes();
         await _analyzeImage(bytes);
       }
     } catch (_) {}
+  }
+
+  Future<void> _captureFromCamera() async {
+    try {
+      final XFile? file = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 65,
+      ).timeout(const Duration(milliseconds: 200), onTimeout: () => null);
+      if (file != null) {
+        final bytes = await file.readAsBytes();
+        await _analyzeImage(bytes);
+        return;
+      }
+    } catch (_) {}
+    _triggerCapture();
   }
 
   Future<void> _analyzeImage(Uint8List imageBytes) async {
@@ -304,7 +321,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                 const SizedBox(height: 24),
                 GestureDetector(
                   key: const Key('shutter_button'),
-                  onTap: _triggerCapture,
+                  onTap: _captureFromCamera,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

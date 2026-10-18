@@ -18,6 +18,10 @@ class SettingsScreen extends ConsumerWidget {
     final profile = state.profile;
     final userEmail = authState.user?.email ?? profile.email;
     final isSignedIn = authState.user != null;
+    final calorieBudget = authState.profile?.dailyCalories ?? profile.calorieBudget;
+    final proteinTarget = authState.profile?.dailyProtein.round() ?? profile.proteinTargetG;
+    final carbsTarget = authState.profile?.dailyCarbs.round() ?? profile.carbsTargetG;
+    final fatTarget = authState.profile?.dailyFat.round() ?? profile.fatTargetG;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -128,25 +132,25 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     _SettingsRow(
                       label: 'Daily Calorie Budget',
-                      value: '${profile.calorieBudget} kcal',
+                      value: '$calorieBudget kcal',
                       onTap: () {},
                     ),
                     const Divider(height: 1),
                     _SettingsRow(
                       label: 'Protein Target',
-                      value: '${profile.proteinTargetG}g',
+                      value: '${proteinTarget}g',
                       onTap: () {},
                     ),
                     const Divider(height: 1),
                     _SettingsRow(
                       label: 'Carbs Target',
-                      value: '${profile.carbsTargetG}g',
+                      value: '${carbsTarget}g',
                       onTap: () {},
                     ),
                     const Divider(height: 1),
                     _SettingsRow(
                       label: 'Fats Target',
-                      value: '${profile.fatTargetG}g',
+                      value: '${fatTarget}g',
                       onTap: () {},
                     ),
                   ],

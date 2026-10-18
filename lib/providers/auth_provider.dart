@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/profile_model.dart';
 import '../services/supabase_service.dart';
+import 'app_state_provider.dart';
 
 class AuthState {
   final User? user;
@@ -37,6 +38,20 @@ class AuthNotifier extends Notifier<AuthState> {
 
   @override
   AuthState build() {
+    final sub = _supabase.authStateChanges?.listen((data) async {
+      final user = data.session?.user;
+      if (user != null) {
+        final profile = await _supabase.getProfile(user.id);
+        state = state.copyWith(user: user, profile: profile);
+        if (profile != null) {
+          ref.read(appStateProvider.notifier).updateFromSupabaseProfile(profile);
+        }
+      } else if (data.event == AuthChangeEvent.signedOut) {
+        state = const AuthState();
+      }
+    });
+    ref.onDispose(() => sub?.cancel());
+
     final current = _supabase.currentUser;
     if (current != null) {
       _loadInitialProfile(current.id);
@@ -48,6 +63,10 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> _loadInitialProfile(String userId) async {
     final profile = await _supabase.getProfile(userId);
     state = state.copyWith(profile: profile);
+    if (profile != null) {
+      ref.read(appStateProvider.notifier).updateFromSupabaseProfile(profile);
+      await ref.read(appStateProvider.notifier).syncFromSupabase();
+    }
   }
 
   Future<bool> signUp({required String email, required String password}) async {
@@ -57,6 +76,10 @@ class AuthNotifier extends Notifier<AuthState> {
       if (response?.user != null) {
         final profile = await _supabase.getProfile(response!.user!.id);
         state = AuthState(user: response.user, profile: profile, isLoading: false);
+        if (profile != null) {
+          ref.read(appStateProvider.notifier).updateFromSupabaseProfile(profile);
+        }
+        await ref.read(appStateProvider.notifier).syncFromSupabase();
         return true;
       }
       state = state.copyWith(isLoading: false, errorMessage: 'Registration failed');
@@ -74,6 +97,10 @@ class AuthNotifier extends Notifier<AuthState> {
       if (response?.user != null) {
         final profile = await _supabase.getProfile(response!.user!.id);
         state = AuthState(user: response.user, profile: profile, isLoading: false);
+        if (profile != null) {
+          ref.read(appStateProvider.notifier).updateFromSupabaseProfile(profile);
+        }
+        await ref.read(appStateProvider.notifier).syncFromSupabase();
         return true;
       }
       state = state.copyWith(isLoading: false, errorMessage: 'Sign in failed');
@@ -93,6 +120,7 @@ class AuthNotifier extends Notifier<AuthState> {
     final success = await _supabase.updateProfile(updated);
     if (success) {
       state = state.copyWith(profile: updated);
+      ref.read(appStateProvider.notifier).updateFromSupabaseProfile(updated);
     }
   }
 }

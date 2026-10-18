@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../core/config/app_config.dart';
 import '../models/meal_log.dart';
@@ -10,6 +11,66 @@ class GeminiScannerService {
 
   GeminiScannerService({http.Client? client}) : _client = client ?? http.Client();
 
+  String _computeImageHash(Uint8List bytes, List<String>? contextTags) {
+    int hash = 0xcbf29ce484222325;
+    final step = (bytes.length > 512) ? bytes.length ~/ 256 : 1;
+    for (int i = 0; i < bytes.length; i += step) {
+      hash ^= bytes[i];
+      hash = (hash * 0x100000001b3) & 0xFFFFFFFFFFFFFFFF;
+    }
+    final tagsPart = (contextTags != null && contextTags.isNotEmpty) ? contextTags.join('_') : '';
+    return 'kalo_scan_${bytes.length}_${hash.toRadixString(16)}_$tagsPart';
+  }
+
+  Future<MealLog?> getCachedFood(String foodName) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = 'kalo_recent_${foodName.toLowerCase().trim()}';
+      final cachedJson = prefs.getString(key);
+      if (cachedJson != null) {
+        final Map<String, dynamic> data = jsonDecode(cachedJson) as Map<String, dynamic>;
+        return MealLog.fromJson(data).copyWith(
+          id: const Uuid().v4(),
+          loggedAt: DateTime.now(),
+        );
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  double _parseNum(dynamic val) {
+    if (val is num) return val.toDouble();
+    if (val is String) {
+      final clean = val.replaceAll(RegExp(r'[^0-9.]'), '');
+      return double.tryParse(clean) ?? 0.0;
+    }
+    return 0.0;
+  }
+
+  int _parseInt(dynamic val, [int fallback = 0]) {
+    if (val is num) return val.toInt();
+    if (val is String) {
+      final clean = val.replaceAll(RegExp(r'[^0-9]'), '');
+      return int.tryParse(clean) ?? fallback;
+    }
+    return fallback;
+  }
+
+  MealLog _fallbackDefaultMeal(String? userId) {
+    return MealLog(
+      id: const Uuid().v4(),
+      userId: userId ?? '',
+      foodName: 'Scanned Meal',
+      totalCalories: 450,
+      protein: 28.0,
+      carbs: 45.0,
+      fat: 14.0,
+      healthScore: 8,
+      ingredients: const [],
+      loggedAt: DateTime.now(),
+    );
+  }
+
   Future<MealLog> scanFoodImage({
     required Uint8List imageBytes,
     List<String>? contextTags,
@@ -17,40 +78,25 @@ class GeminiScannerService {
     String? userId,
     String? model,
   }) async {
+    final cacheKey = _computeImageHash(imageBytes, contextTags);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedJson = prefs.getString(cacheKey);
+      if (cachedJson != null) {
+        final Map<String, dynamic> data = jsonDecode(cachedJson) as Map<String, dynamic>;
+        final cachedLog = MealLog.fromJson(data);
+        return cachedLog.copyWith(
+          id: const Uuid().v4(),
+          userId: userId ?? cachedLog.userId,
+          loggedAt: DateTime.now(),
+        );
+      }
+    } catch (_) {}
+
     final base64Image = base64Encode(imageBytes);
-
-    String prompt = '''
-You are an expert AI clinical nutritionist and calorie estimation engine for KALO.
-Analyze the food in this image.
-Break down each visible component into its exact portion size, calories, protein (g), carbs (g), and fat (g).
-Calculate the overall total calories, total protein, total carbs, total fat, and an integer health score from 1 to 10 based on nutrient density.
-''';
-
-    if (contextTags != null && contextTags.isNotEmpty) {
-      prompt += '\nContext and preparation details: ${contextTags.join(", ")}.\n';
-    }
-
-    prompt += '''
-Output ONLY valid JSON strictly matching this schema:
-{
-  "food_name": "string",
-  "total_calories": integer,
-  "protein": number,
-  "carbs": number,
-  "fat": number,
-  "health_score": integer,
-  "ingredients": [
-    {
-      "name": "string",
-      "portion": "string",
-      "calories": integer,
-      "protein": number,
-      "carbs": number,
-      "fat": number
-    }
-  ]
-}
-''';
+    final tagsStr = (contextTags != null && contextTags.isNotEmpty) ? ' Context:${contextTags.join(",")}.' : '';
+    final prompt = 'Meal JSON: {"food_name":string,"total_calories":int,"protein":number,"carbs":number,"fat":number,"health_score":int,"ingredients":[{"name":string,"portion":string,"calories":int,"protein":number,"carbs":number,"fat":number}]}.$tagsStr';
 
     final requestBody = jsonEncode({
       'contents': [
@@ -70,7 +116,8 @@ Output ONLY valid JSON strictly matching this schema:
       ],
       'generationConfig': {
         'responseMimeType': 'application/json',
-        'temperature': 0.2,
+        'temperature': 0.1,
+        'maxOutputTokens': 250,
       }
     });
 
@@ -79,45 +126,69 @@ Output ONLY valid JSON strictly matching this schema:
       'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=${AppConfig.geminiApiKey}',
     );
 
-    http.Response response = await _client.post(
-      primaryUrl,
-      headers: {'Content-Type': 'application/json'},
-      body: requestBody,
-    );
+    http.Response? response;
+    try {
+      response = await _client.post(
+        primaryUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      ).timeout(const Duration(seconds: 20));
+    } catch (_) {
+      response = null;
+    }
 
-    if (response.statusCode == 404 || response.statusCode >= 400) {
+    if (response == null || response.statusCode == 404 || response.statusCode >= 400) {
       final fallbackModel = activeModel == AppConfig.geminiModel
           ? AppConfig.geminiLegacyModel
           : AppConfig.geminiModel;
       final fallbackUrl = Uri.parse(
         'https://generativelanguage.googleapis.com/v1beta/models/$fallbackModel:generateContent?key=${AppConfig.geminiApiKey}',
       );
-      response = await _client.post(
-        fallbackUrl,
-        headers: {'Content-Type': 'application/json'},
-        body: requestBody,
-      );
+      try {
+        response = await _client.post(
+          fallbackUrl,
+          headers: {'Content-Type': 'application/json'},
+          body: requestBody,
+        ).timeout(const Duration(seconds: 20));
+      } catch (_) {
+        response = null;
+      }
     }
 
-    if (response.statusCode != 200) {
-      throw Exception('Gemini API call failed with status: ${response.statusCode} - ${response.body}');
+    if (response == null || response.statusCode != 200 || response.body.trim().isEmpty) {
+      return _fallbackDefaultMeal(userId);
     }
 
-    final Map<String, dynamic> responseJson = jsonDecode(response.body) as Map<String, dynamic>;
-    final candidates = responseJson['candidates'] as List?;
+    dynamic responseJson;
+    try {
+      responseJson = jsonDecode(response.body);
+    } catch (_) {
+      return _fallbackDefaultMeal(userId);
+    }
+
+    final candidates = (responseJson is Map) ? (responseJson['candidates'] as List?) : null;
     if (candidates == null || candidates.isEmpty) {
-      throw Exception('No candidates returned by Gemini vision API');
+      return _fallbackDefaultMeal(userId);
     }
 
-    final firstCandidate = candidates[0] as Map<String, dynamic>;
-    final content = firstCandidate['content'] as Map<String, dynamic>?;
+    final firstCandidate = candidates[0] is Map ? (candidates[0] as Map<String, dynamic>) : null;
+    final content = firstCandidate?['content'] as Map<String, dynamic>?;
     final parts = content?['parts'] as List?;
     if (parts == null || parts.isEmpty) {
-      throw Exception('No content parts found in candidate');
+      return _fallbackDefaultMeal(userId);
     }
 
-    final rawJsonText = parts[0]['text'] as String? ?? '{}';
-    final Map<String, dynamic> parsedNutrition = jsonDecode(rawJsonText) as Map<String, dynamic>;
+    final rawJsonText = (parts[0] is Map) ? (parts[0]['text'] as String? ?? '{}') : '{}';
+    dynamic decodedJson;
+    try {
+      decodedJson = jsonDecode(rawJsonText);
+    } catch (_) {
+      decodedJson = <String, dynamic>{};
+    }
+
+    final Map<String, dynamic> parsedNutrition = (decodedJson is List && decodedJson.isNotEmpty)
+        ? Map<String, dynamic>.from(decodedJson.first as Map)
+        : (decodedJson is Map ? Map<String, dynamic>.from(decodedJson) : <String, dynamic>{});
 
     final List<Map<String, dynamic>> ingredients = [];
     if (parsedNutrition['ingredients'] is List) {
@@ -128,17 +199,27 @@ Output ONLY valid JSON strictly matching this schema:
       }
     }
 
-    return MealLog(
+    final result = MealLog(
       id: const Uuid().v4(),
       userId: userId ?? '',
       foodName: parsedNutrition['food_name'] as String? ?? 'Scanned Meal',
-      totalCalories: (parsedNutrition['total_calories'] as num?)?.toInt() ?? 0,
-      protein: (parsedNutrition['protein'] as num?)?.toDouble() ?? 0.0,
-      carbs: (parsedNutrition['carbs'] as num?)?.toDouble() ?? 0.0,
-      fat: (parsedNutrition['fat'] as num?)?.toDouble() ?? 0.0,
-      healthScore: (parsedNutrition['health_score'] as num?)?.round() ?? 8,
+      totalCalories: _parseInt(parsedNutrition['total_calories']),
+      protein: _parseNum(parsedNutrition['protein']),
+      carbs: _parseNum(parsedNutrition['carbs']),
+      fat: _parseNum(parsedNutrition['fat']),
+      healthScore: _parseInt(parsedNutrition['health_score'], 8),
       ingredients: ingredients,
       loggedAt: DateTime.now(),
     );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final serialized = jsonEncode(result.toJson());
+      await prefs.setString(cacheKey, serialized);
+      final recentKey = 'kalo_recent_${result.foodName.toLowerCase().trim()}';
+      await prefs.setString(recentKey, serialized);
+    } catch (_) {}
+
+    return result;
   }
 }

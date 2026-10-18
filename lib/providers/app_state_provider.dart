@@ -3,6 +3,7 @@ import '../data/mock_database.dart';
 import '../models/meal.dart';
 import '../models/meal_ingredient.dart';
 import '../models/meal_log.dart';
+import '../models/profile_model.dart';
 import '../models/user_profile.dart';
 import '../services/supabase_service.dart';
 
@@ -155,6 +156,20 @@ class AppStateNotifier extends Notifier<AppState> {
 
   void updateProfile(UserProfile newProfile) {
     state = state.copyWith(profile: newProfile);
+  }
+
+  void updateFromSupabaseProfile(ProfileModel cloudProfile) {
+    state = state.copyWith(
+      profile: state.profile.copyWith(
+        calorieBudget: cloudProfile.dailyCalories,
+        proteinTargetG: cloudProfile.dailyProtein.round(),
+        carbsTargetG: cloudProfile.dailyCarbs.round(),
+        fatTargetG: cloudProfile.dailyFat.round(),
+        weightKg: cloudProfile.weight,
+        heightCm: cloudProfile.height,
+        age: cloudProfile.age,
+      ),
+    );
   }
 
   void toggleFasting() {

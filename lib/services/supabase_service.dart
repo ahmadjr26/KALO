@@ -37,17 +37,23 @@ class SupabaseService {
     final supa = client;
     if (supa == null) return null;
 
-    final response = await supa.auth.signUp(
-      email: email.trim(),
-      password: password,
-    );
+    try {
+      final response = await supa.auth
+          .signUp(
+            email: email.trim(),
+            password: password,
+          )
+          .timeout(const Duration(seconds: 15));
 
-    final user = response.user;
-    if (user != null) {
-      await createDefaultProfile(user.id);
+      final user = response.user;
+      if (user != null) {
+        await createDefaultProfile(user.id);
+      }
+
+      return response;
+    } catch (_) {
+      return null;
     }
-
-    return response;
   }
 
   Future<AuthResponse?> signIn({
@@ -57,35 +63,45 @@ class SupabaseService {
     final supa = client;
     if (supa == null) return null;
 
-    return await supa.auth.signInWithPassword(
-      email: email.trim(),
-      password: password,
-    );
+    try {
+      return await supa.auth
+          .signInWithPassword(
+            email: email.trim(),
+            password: password,
+          )
+          .timeout(const Duration(seconds: 15));
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> signOut() async {
     final supa = client;
     if (supa == null) return;
-    await supa.auth.signOut();
+    try {
+      await supa.auth.signOut().timeout(const Duration(seconds: 10));
+    } catch (_) {}
   }
 
   Future<void> createDefaultProfile(String userId) async {
     final supa = client;
     if (supa == null) return;
 
-    final defaultProfile = ProfileModel(
-      id: userId,
-      weight: 70.0,
-      height: 175.0,
-      age: 25,
-      goal: 'maintain',
-      dailyCalories: 2000,
-      dailyProtein: 150.0,
-      dailyCarbs: 200.0,
-      dailyFat: 65.0,
-    );
+    try {
+      final defaultProfile = ProfileModel(
+        id: userId,
+        weight: 70.0,
+        height: 175.0,
+        age: 25,
+        goal: 'maintain',
+        dailyCalories: 2000,
+        dailyProtein: 150.0,
+        dailyCarbs: 200.0,
+        dailyFat: 65.0,
+      );
 
-    await supa.from('profiles').upsert(defaultProfile.toJson());
+      await supa.from('profiles').upsert(defaultProfile.toJson()).timeout(const Duration(seconds: 15));
+    } catch (_) {}
   }
 
   Future<ProfileModel?> getProfile([String? userId]) async {
@@ -98,7 +114,8 @@ class SupabaseService {
           .from('profiles')
           .select()
           .eq('id', targetId)
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(const Duration(seconds: 15));
 
       if (data == null) return null;
       return ProfileModel.fromJson(data);
@@ -112,7 +129,7 @@ class SupabaseService {
     if (supa == null) return false;
 
     try {
-      await supa.from('profiles').upsert(profile.toJson());
+      await supa.from('profiles').upsert(profile.toJson()).timeout(const Duration(seconds: 15));
       return true;
     } catch (_) {
       return false;
@@ -131,7 +148,8 @@ class SupabaseService {
           .from('meal_logs')
           .insert(payload)
           .select()
-          .single();
+          .single()
+          .timeout(const Duration(seconds: 15));
 
       return MealLog.fromJson(response);
     } catch (_) {
@@ -149,11 +167,8 @@ class SupabaseService {
       if (targetId != null && targetId.isNotEmpty) {
         query = query.eq('user_id', targetId);
       }
-      final response = await query.order('logged_at', ascending: false);
-
-      return (response as List)
-          .map((item) => MealLog.fromJson(item as Map<String, dynamic>))
-          .toList();
+      final response = await query.order('logged_at', ascending: false).timeout(const Duration(seconds: 15));
+      return response.map((item) => MealLog.fromJson(item)).toList();
     } catch (_) {
       return [];
     }
@@ -164,7 +179,7 @@ class SupabaseService {
     if (supa == null) return false;
 
     try {
-      await supa.from('meal_logs').delete().eq('id', id);
+      await supa.from('meal_logs').delete().eq('id', id).timeout(const Duration(seconds: 15));
       return true;
     } catch (_) {
       return false;

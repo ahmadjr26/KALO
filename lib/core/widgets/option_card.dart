@@ -9,6 +9,7 @@ class OptionCard extends StatelessWidget {
   final String? emoji;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isCompact;
 
   const OptionCard({
     super.key,
@@ -18,44 +19,124 @@ class OptionCard extends StatelessWidget {
     this.emoji,
     required this.isSelected,
     required this.onTap,
+    this.isCompact = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (isCompact) {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.accentSubtle : AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppColors.accent : AppColors.border,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            splashColor: AppColors.accent.withAlpha(25),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.surface
+                            : AppColors.surfaceElevated,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppColors.accentBorder
+                              : AppColors.border,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          icon,
+                          size: 20,
+                          color: isSelected ? AppColors.accent : AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.sm.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: isSelected ? AppColors.accent : AppColors.text,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.surfaceElevated : AppColors.surface,
+        color: isSelected ? AppColors.accentSubtle : AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSelected ? AppColors.accent : AppColors.border,
-          width: isSelected ? 2 : 1,
+          width: isSelected ? 1.5 : 1,
         ),
-        boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: AppColors.accent.withAlpha(40),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
+          splashColor: AppColors.accent.withAlpha(25),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                if (emoji != null) ...[
-                  Text(emoji!, style: const TextStyle(fontSize: 24)),
+                if (icon != null) ...[
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.surface
+                          : AppColors.surfaceElevated,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.accentBorder
+                            : AppColors.border,
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        size: 20,
+                        color: isSelected ? AppColors.accent : AppColors.textMuted,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 14),
-                ] else if (icon != null) ...[
-                  Icon(icon, size: 24, color: isSelected ? AppColors.accent : AppColors.textMuted),
+                ] else if (emoji != null) ...[
+                  Text(emoji!, style: const TextStyle(fontSize: 22)),
                   const SizedBox(width: 14),
                 ],
                 Expanded(
@@ -71,7 +152,7 @@ class OptionCard extends StatelessWidget {
                         ),
                       ),
                       if (subtitle != null) ...[
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 2),
                         Text(
                           subtitle!,
                           style: AppTypography.xs.copyWith(
@@ -82,6 +163,7 @@ class OptionCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(width: 10),
                 Container(
                   width: 22,
                   height: 22,
@@ -89,7 +171,7 @@ class OptionCard extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isSelected ? AppColors.accent : AppColors.borderInput,
-                      width: 2,
+                      width: 1.5,
                     ),
                     color: isSelected ? AppColors.accent : Colors.transparent,
                   ),

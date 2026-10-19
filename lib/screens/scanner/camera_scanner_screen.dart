@@ -32,6 +32,22 @@ class _CameraScannerScreenState extends ConsumerState<CameraScannerScreen>
 
   final List<String> _modes = ['Food Scan', 'Barcode', 'Nutrition Label', 'Voice'];
 
+  String _getModeLabel(int index, AppLanguage lang) {
+    final isAr = lang == AppLanguage.arabic;
+    switch (index) {
+      case 0:
+        return isAr ? 'مسح الوجبة' : 'Food Scan';
+      case 1:
+        return isAr ? 'باركود' : 'Barcode';
+      case 2:
+        return isAr ? 'ملصق غذائي' : 'Nutrition Label';
+      case 3:
+        return isAr ? 'تسجيل صوتي' : 'Voice';
+      default:
+        return '';
+    }
+  }
+
   bool get _isInTest =>
       !kIsWeb && (Platform.environment.containsKey('FLUTTER_TEST') || const bool.fromEnvironment('flutter.test'));
 
@@ -560,7 +576,7 @@ class _CameraScannerScreenState extends ConsumerState<CameraScannerScreen>
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
-                              _modes[index],
+                              _getModeLabel(index, currentLang),
                               style: TextStyle(
                                 color: isSelected ? AppColors.accent : Colors.white70,
                                 fontSize: 13,

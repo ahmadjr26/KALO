@@ -315,6 +315,346 @@ class AppStrings {
       'ar': 'نافذة الأكل مفتوحة',
       'en': 'Eating window open',
     },
+    'meal_breakdown': {
+      'ar': 'تفاصيل الوجبة',
+      'en': 'Meal Breakdown',
+    },
+    'confirm_log_meal': {
+      'ar': 'تأكيد وحفظ الوجبة',
+      'en': 'Confirm & Log Meal',
+    },
+    'plate_ingredients': {
+      'ar': 'مكونات الطبق',
+      'en': 'Plate Ingredients',
+    },
+    'tap_to_adjust': {
+      'ar': 'اضغط لتعديل الكميات',
+      'en': 'Tap to adjust portions',
+    },
+    'visual_confidence': {
+      'ar': 'تم التعرف بالذكاء الاصطناعي بدقة عالية',
+      'en': 'Identified with 94% visual confidence',
+    },
+    'nutritional_quality': {
+      'ar': 'تحليل جودة التغذية',
+      'en': 'Nutritional Quality Analysis',
+    },
+    'added_sugar': {
+      'ar': 'السكر المضاف',
+      'en': 'Added Sugar',
+    },
+    'optimal': {
+      'ar': 'مثالي (<2جم)',
+      'en': 'Optimal (<2g)',
+    },
+    'processing_level': {
+      'ar': 'مستوى المعالجة',
+      'en': 'Processing Level',
+    },
+    'whole_ingredients': {
+      'ar': 'مكونات طبيعية وكاملة',
+      'en': 'Whole, natural ingredients',
+    },
+    'sodium_content': {
+      'ar': 'محتوى الصوديوم',
+      'en': 'Sodium Content',
+    },
+    'balanced': {
+      'ar': 'معتدل ومتوازن',
+      'en': 'Moderate & balanced',
+    },
+    'guest_mode': {
+      'ar': 'المتابعة كضيف',
+      'en': 'Continue as Guest',
+    },
+    'onboarding_welcome_badge': {
+      'ar': 'ذكاء اصطناعي فائق للتغذية',
+      'en': 'PRECISION AI NUTRITION',
+    },
+    'onboarding_welcome_title': {
+      'ar': 'صوّر وجبتك.\nكالـو يحسب كل شيء.',
+      'en': 'Snap your meal.\nKalo tracks everything.',
+    },
+    'onboarding_welcome_subtitle': {
+      'ar': 'بدون بحث يدوي أو ميزان طعام. وجّه الكاميرا ودع الذكاء الاصطناعي يتعرف على المكونات والسعرات والماكروز في ثوانٍ.',
+      'en': 'No tedious searching. No kitchen scales. Point your camera and let AI detect ingredients, calories, and macros in seconds.',
+    },
+    'onboarding_demo_label': {
+      'ar': 'محاكاة التعرف الذكي الفوري',
+      'en': 'AI Visual Detection Simulation',
+    },
+    'onboarding_demo_dish': {
+      'ar': 'صدر دجاج مشوي مع أرز بسمتي وخضار',
+      'en': 'Grilled Chicken Breast, Basmati & Greens',
+    },
+    'onboarding_demo_cal': {
+      'ar': '520 سعرة',
+      'en': '520 kcal',
+    },
+    'onboarding_demo_p': {
+      'ar': '46جم بروتين',
+      'en': '46g Protein',
+    },
+    'onboarding_demo_c': {
+      'ar': '54جم كارب',
+      'en': '54g Carbs',
+    },
+    'onboarding_demo_f': {
+      'ar': '11جم دهون',
+      'en': '11g Fat',
+    },
+    'onboarding_demo_confidence': {
+      'ar': 'دقة التعرف البصري: 96%',
+      'en': 'Visual AI Confidence: 96%',
+    },
+    'onboarding_get_started': {
+      'ar': 'ابدأ الآن',
+      'en': 'Get Started',
+    },
+    'onboarding_goal_title': {
+      'ar': 'ما هو هدفك الأساسي؟',
+      'en': 'What is your primary goal?',
+    },
+    'onboarding_goal_subtitle': {
+      'ar': 'سنخصص ميزانيتك اليومية من السعرات والماكروز بدقة لتحقيق هدفك.',
+      'en': 'We calibrate your daily caloric target and macro split around this goal.',
+    },
+    'goal_lose_weight': {
+      'ar': 'خسارة الوزن',
+      'en': 'Lose Weight',
+    },
+    'goal_lose_weight_desc': {
+      'ar': 'حرق الدهون بعجز سعرات صحي ومستدام',
+      'en': 'Burn fat with a sustained, healthy caloric deficit',
+    },
+    'goal_build_muscle': {
+      'ar': 'بناء العضلات',
+      'en': 'Build Muscle',
+    },
+    'goal_build_muscle_desc': {
+      'ar': 'زيادة الكتلة العضلية مع تلبية احتياج البروتين',
+      'en': 'Gain lean muscle with optimal protein synthesis',
+    },
+    'goal_maintain': {
+      'ar': 'المحافظة على الوزن',
+      'en': 'Maintain Weight',
+    },
+    'goal_maintain_desc': {
+      'ar': 'موازنة استهلاك الطاقة وتحسين الصحة الأيضية',
+      'en': 'Balance energy intake and optimize metabolic health',
+    },
+    'goal_eat_healthier': {
+      'ar': 'تناول طعام صحي',
+      'en': 'Eat Healthier',
+    },
+    'goal_eat_healthier_desc': {
+      'ar': 'تحسين جودة الطعام ومغذياته دون قيود قاسية',
+      'en': 'Enhance nutrient density and overall diet quality',
+    },
+    'onboarding_barrier_title': {
+      'ar': 'ما أكبر تحدٍ واجهك سابقاً؟',
+      'en': 'What stopped you in the past?',
+    },
+    'onboarding_barrier_subtitle': {
+      'ar': 'صُمم كالـو خصيصاً لإلغاء أي عناء وجعل الالتزام سهلاً وتلقائياً.',
+      'en': 'Kalo is engineered specifically to eliminate tracking friction.',
+    },
+    'barrier_too_long': {
+      'ar': 'التسجيل اليدوي يستغرق وقتاً طويلاً',
+      'en': 'Manual logging takes too long',
+    },
+    'barrier_too_long_desc': {
+      'ar': 'البحث عن المكونات وإدخال الأوزان كان يسبب الملل',
+      'en': 'Searching databases for every single ingredient',
+    },
+    'barrier_forget': {
+      'ar': 'أنسى تسجيل الوجبات بانتظام',
+      'en': 'I forget to log meals',
+    },
+    'barrier_forget_desc': {
+      'ar': 'التطبيقات المعقدة يصعب الاستمرار عليها يومياً',
+      'en': 'Complicated interfaces make daily adherence hard',
+    },
+    'barrier_portions': {
+      'ar': 'صعوبة تقدير كميات الطعام والمطاعم',
+      'en': 'Inaccurate portion estimates',
+    },
+    'barrier_portions_desc': {
+      'ar': 'عدم معرفة الأوزان الدقيقة للوجبات الجاهزة',
+      'en': 'Uncertainty about oils, sauces, and restaurant grams',
+    },
+    'onboarding_bio_title': {
+      'ar': 'العمر والجنس البيولوجي',
+      'en': 'Biological Sex & Age',
+    },
+    'onboarding_bio_subtitle': {
+      'ar': 'عوامل علمية أساسية لحساب معدل الأيض القاعدي (BMR).',
+      'en': 'Essential factors for determining baseline energy expenditure.',
+    },
+    'gender_male': {
+      'ar': 'ذكر',
+      'en': 'Male',
+    },
+    'gender_female': {
+      'ar': 'أنثى',
+      'en': 'Female',
+    },
+    'age_title': {
+      'ar': 'العمر',
+      'en': 'Age',
+    },
+    'years_old': {
+      'ar': 'سنة',
+      'en': 'years old',
+    },
+    'onboarding_measurements_title': {
+      'ar': 'قياساتك الحالية',
+      'en': 'Your Measurements',
+    },
+    'onboarding_measurements_subtitle': {
+      'ar': 'تُستخدم لحساب معدل استهلاك الطاقة اليومي بدقة.',
+      'en': 'Used to calculate your Basal Metabolic Rate (BMR).',
+    },
+    'unit_metric': {
+      'ar': 'متري (سم / كجم)',
+      'en': 'Metric (cm / kg)',
+    },
+    'unit_imperial': {
+      'ar': 'إمبراطوري (قدم / باوند)',
+      'en': 'Imperial (ft / lbs)',
+    },
+    'height_label': {
+      'ar': 'الطول',
+      'en': 'Height',
+    },
+    'weight_label': {
+      'ar': 'الوزن الحالي',
+      'en': 'Current Weight',
+    },
+    'onboarding_target_title': {
+      'ar': 'الوزن المستهدف والوتيرة',
+      'en': 'Target Weight & Pace',
+    },
+    'onboarding_target_subtitle': {
+      'ar': 'اختر الوتيرة المناسبة لنمط حياتك لضمان ثبات النتائج.',
+      'en': 'Choose a sustainable deficit pace to preserve lean muscle.',
+    },
+    'target_weight_label': {
+      'ar': 'الهدف',
+      'en': 'Target Goal',
+    },
+    'pace_steady': {
+      'ar': 'وتيرة هادئة ومريحة',
+      'en': 'Steady & Gentle',
+    },
+    'pace_steady_desc': {
+      'ar': '0.25 كجم / أسبوع • عجز خفيف جداً وبدون جوع',
+      'en': '0.25 kg / week • Minimal hunger deficit',
+    },
+    'pace_balanced': {
+      'ar': 'وتيرة متوازنة (الموصى بها)',
+      'en': 'Balanced (Recommended)',
+    },
+    'pace_balanced_desc': {
+      'ar': '0.50 كجم / أسبوع • المعدل الذهبي المثالي طبياً',
+      'en': '0.50 kg / week • Clinical standard for sustainable fat loss',
+    },
+    'pace_fast': {
+      'ar': 'وتيرة مكثفة',
+      'en': 'Intensive Pace',
+    },
+    'pace_fast_desc': {
+      'ar': '0.75 كجم / أسبوع • انضباط غذائي أعلى',
+      'en': '0.75 kg / week • Strict caloric adherence',
+    },
+    'onboarding_activity_title': {
+      'ar': 'مستوى نشاطك البدني',
+      'en': 'Physical Activity Level',
+    },
+    'onboarding_activity_subtitle': {
+      'ar': 'يُضرب بمعدل BMR لحساب إجمالي استهلاك الطاقة اليومي (TDEE).',
+      'en': 'Multiplied by BMR to calculate Total Daily Energy Expenditure (TDEE).',
+    },
+    'activity_light': {
+      'ar': '0 - 2 تمرين أسبوعياً',
+      'en': '0 - 2 workouts / week',
+    },
+    'activity_light_desc': {
+      'ar': 'نمط حياة مكتبي أو حركة خفيفة',
+      'en': 'Mostly sedentary routine or light walking',
+    },
+    'activity_moderate': {
+      'ar': '3 - 5 تمارين أسبوعياً',
+      'en': '3 - 5 workouts / week',
+    },
+    'activity_moderate_desc': {
+      'ar': 'تمارين مقاومة أو جري أو رياضة منتظمة',
+      'en': 'Regular gym workouts, running, or active sports',
+    },
+    'activity_intense': {
+      'ar': '6+ تمارين أسبوعياً',
+      'en': '6+ workouts / week',
+    },
+    'activity_intense_desc': {
+      'ar': 'تدريب رياضي مكثف أو عمل بدني مجهد',
+      'en': 'High-intensity athletic training or physically demanding job',
+    },
+    'onboarding_plan_title': {
+      'ar': 'خطتك الغذائية العلمية',
+      'en': 'Your Custom Nutrition Plan',
+    },
+    'onboarding_plan_subtitle': {
+      'ar': 'تم حساب خطتك بدقة وفق معادلة ميفلين-سانت جور (Mifflin-St Jeor).',
+      'en': 'Clinically calculated using the Mifflin-St Jeor equation.',
+    },
+    'metric_bmr': {
+      'ar': 'معدل الأيض الأساسي (BMR)',
+      'en': 'Basal Metabolic Rate (BMR)',
+    },
+    'metric_bmr_desc': {
+      'ar': 'سعرات حرق الجسم أثناء الراحة التامة',
+      'en': 'Calories burned at rest for basic biological functions',
+    },
+    'metric_tdee': {
+      'ar': 'إجمالي حرق الطاقة (TDEE)',
+      'en': 'Total Energy Expenditure (TDEE)',
+    },
+    'metric_tdee_desc': {
+      'ar': 'إجمالي استهلاك السعرات مع احتساب النشاط',
+      'en': 'Daily caloric burn including physical activity',
+    },
+    'daily_budget': {
+      'ar': 'هدفك اليومي من السعرات',
+      'en': 'Daily Caloric Target',
+    },
+    'daily_macros': {
+      'ar': 'توزيع الماكروز اليومي',
+      'en': 'Target Macro Distribution',
+    },
+    'projected_timeline': {
+      'ar': 'التوقع الزمني للوصول لهدفك',
+      'en': 'Projected Target Timeline',
+    },
+    'projected_reach_date': {
+      'ar': 'الوصول المتوقع لهدفك في',
+      'en': 'Estimated achievement date',
+    },
+    'start_journey': {
+      'ar': 'اعتماد الخطة والمتابعة',
+      'en': 'Accept Plan & Continue',
+    },
+    'continue_label': {
+      'ar': 'متابعة',
+      'en': 'Continue',
+    },
+    'back_label': {
+      'ar': 'رجوع',
+      'en': 'Back',
+    },
+    'switch_language': {
+      'ar': 'English',
+      'en': 'العربية',
+    },
   };
 
   static String get(String key, AppLanguage lang) {

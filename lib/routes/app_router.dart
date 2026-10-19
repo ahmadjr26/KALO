@@ -26,7 +26,7 @@ String _determineInitialLocation() {
       return '/dashboard';
     }
   } catch (_) {}
-  return '/auth';
+  return '/onboarding';
 }
 
 final appRouter = GoRouter(

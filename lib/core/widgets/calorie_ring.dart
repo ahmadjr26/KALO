@@ -14,7 +14,7 @@ class CalorieBudgetRing extends StatefulWidget {
     required this.consumedCalories,
     required this.calorieBudget,
     this.burnedCalories = 0,
-    this.size = 210,
+    this.size = 200,
   });
 
   @override
@@ -79,7 +79,7 @@ class _CalorieBudgetRingState extends State<CalorieBudgetRing>
                   painter: _RingPainter(
                     progress: currentProgress,
                     strokeWidth: 14,
-                    trackColor: AppColors.border,
+                    trackColor: const Color(0xFFE2E8F0),
                     progressColor: isOverBudget ? AppColors.danger : AppColors.accent,
                   ),
                 ),
@@ -91,9 +91,11 @@ class _CalorieBudgetRingState extends State<CalorieBudgetRing>
                       style: AppTypography.display.copyWith(
                         color: isOverBudget ? AppColors.danger : AppColors.text,
                         fontWeight: FontWeight.w800,
+                        fontSize: 36,
+                        height: 1.1,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Text(
                       isOverBudget ? 'CALORIES OVER' : 'CALORIES LEFT',
                       style: AppTypography.xs.copyWith(
@@ -140,13 +142,6 @@ class _RingPainter extends CustomPainter {
     canvas.drawCircle(center, radius, trackPaint);
 
     if (progress > 0) {
-      final glowPaint = Paint()
-        ..color = progressColor.withValues(alpha: 0.3)
-        ..strokeWidth = strokeWidth + 6
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
-
       final progressPaint = Paint()
         ..color = progressColor
         ..strokeWidth = strokeWidth
@@ -155,14 +150,6 @@ class _RingPainter extends CustomPainter {
 
       const startAngle = -math.pi / 2;
       final sweepAngle = 2 * math.pi * progress;
-
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweepAngle,
-        false,
-        glowPaint,
-      );
 
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/primary_button.dart';
@@ -79,6 +80,8 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = ref.watch(localeProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
@@ -87,18 +90,18 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Meal Breakdown',
+          AppStrings.get('meal_breakdown', lang),
           style: AppTypography.md.copyWith(fontWeight: FontWeight.w800),
         ),
         actions: [
           PopupMenuButton<MealType>(
             initialValue: _selectedMealType,
             onSelected: (type) => setState(() => _selectedMealType = type),
-            color: AppColors.surfaceElevated,
+            color: AppColors.surface,
             itemBuilder: (context) => MealType.values.map((type) {
               return PopupMenuItem(
                 value: type,
-                child: Text(type.label, style: const TextStyle(color: Colors.white)),
+                child: Text(type.label, style: const TextStyle(color: AppColors.text)),
               );
             }).toList(),
             child: Container(
@@ -144,7 +147,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                         const Icon(Icons.auto_awesome, size: 14, color: AppColors.accent),
                         const SizedBox(width: 6),
                         Text(
-                          'Identified with 94% visual confidence',
+                          AppStrings.get('visual_confidence', lang),
                           style: AppTypography.xs.copyWith(color: AppColors.accent),
                         ),
                       ],
@@ -174,7 +177,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                                         color: AppColors.accent,
                                       ),
                                     ),
-                                    Text('TOTAL ESTIMATED CALORIES', style: AppTypography.xs),
+                                    Text('${AppStrings.get('consumed', lang)} (${AppStrings.get('kcal', lang)})', style: AppTypography.xs),
                                   ],
                                 ),
                               ),
@@ -191,7 +194,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                                   children: [
                                     Row(
                                       children: [
-                                        const Text('🌿', style: TextStyle(fontSize: 14)),
+                                        const Icon(Icons.eco_rounded, color: AppColors.accent, size: 16),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${_currentMeal.healthScore}/10',
@@ -202,7 +205,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                                         ),
                                       ],
                                     ),
-                                    Text('HEALTH SCORE', style: AppTypography.xs),
+                                    Text(AppStrings.get('health_score', lang).toUpperCase(), style: AppTypography.xs),
                                   ],
                                 ),
                               ),
@@ -215,17 +218,17 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               _MacroPill(
-                                label: 'PROTEIN',
+                                label: AppStrings.get('protein', lang).toUpperCase(),
                                 grams: _currentMeal.totalProtein,
                                 color: AppColors.protein,
                               ),
                               _MacroPill(
-                                label: 'CARBS',
+                                label: AppStrings.get('carbs', lang).toUpperCase(),
                                 grams: _currentMeal.totalCarbs,
                                 color: AppColors.carbs,
                               ),
                               _MacroPill(
-                                label: 'FATS',
+                                label: AppStrings.get('fat', lang).toUpperCase(),
                                 grams: _currentMeal.totalFat,
                                 color: AppColors.fat,
                               ),
@@ -247,15 +250,15 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nutritional Quality Analysis',
+                            AppStrings.get('nutritional_quality', lang),
                             style: AppTypography.sm.copyWith(fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 12),
-                          _FactorRow(label: 'Added Sugar', rating: 'Optimal (<2g)', isGood: true),
+                          _FactorRow(label: AppStrings.get('added_sugar', lang), rating: AppStrings.get('optimal', lang), isGood: true),
                           const SizedBox(height: 8),
-                          _FactorRow(label: 'Processing Level', rating: 'Whole, natural ingredients', isGood: true),
+                          _FactorRow(label: AppStrings.get('processing_level', lang), rating: AppStrings.get('whole_ingredients', lang), isGood: true),
                           const SizedBox(height: 8),
-                          _FactorRow(label: 'Sodium Content', rating: 'Moderate & balanced', isGood: true),
+                          _FactorRow(label: AppStrings.get('sodium_content', lang), rating: AppStrings.get('balanced', lang), isGood: true),
                         ],
                       ),
                     ),
@@ -266,7 +269,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            'Plate Ingredients (${_currentMeal.ingredients.length})',
+                            '${AppStrings.get('plate_ingredients', lang)} (${_currentMeal.ingredients.length})',
                             style: AppTypography.md.copyWith(fontWeight: FontWeight.w800),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -274,7 +277,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Tap to adjust portions',
+                          AppStrings.get('tap_to_adjust', lang),
                           style: AppTypography.xs.copyWith(color: AppColors.accent),
                         ),
                       ],
@@ -349,7 +352,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
             Padding(
               padding: const EdgeInsets.all(20),
               child: PrimaryButton(
-                label: 'Confirm & Log Meal',
+                label: AppStrings.get('confirm_log_meal', lang),
                 size: ButtonSize.lg,
                 icon: Icons.check,
                 onPressed: _confirmAndLog,

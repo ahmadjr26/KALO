@@ -1,36 +1,57 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const Color bg = Color(0xFF08090C);
-  static const Color surface = Color(0xFF11141A);
-  static const Color surfaceElevated = Color(0xFF1A1F28);
-  static const Color border = Color(0xFF242B38);
-  static const Color borderInput = Color(0xFF4A5568);
+  // Surfaces & Backgrounds (Light-first, clean white & warm neutral)
+  static const Color bg = Color(0xFFF8FAF9);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceElevated = Color(0xFFF1F5F9);
+  static const Color surfaceMuted = Color(0xFFF3F4F6);
 
-  static const Color text = Color(0xFFF9FAFB);
-  static const Color textMuted = Color(0xFF94A3B8);
+  // Borders & Dividers
+  static const Color border = Color(0xFFE2E8F0);
+  static const Color borderInput = Color(0xFFCBD5E1);
 
-  static const Color accent = Color(0xFF05DF72);
-  static const Color accentGlow = Color(0xFF10E779);
-  static const Color onAccent = Color(0xFF000000);
+  // Typography & Content
+  static const Color text = Color(0xFF0F172A);
+  static const Color textSecondary = Color(0xFF475569);
+  static const Color textMuted = Color(0xFF64748B);
+  static const Color textPlaceholder = Color(0xFF94A3B8);
 
-  static const Color danger = Color(0xFFFB7185);
-  static const Color warning = Color(0xFFFBBF24);
-  static const Color success = Color(0xFF10B981);
+  // Brand Accent (Carefully controlled clinical emerald - never neon)
+  static const Color accent = Color(0xFF059669);
+  static const Color accentHover = Color(0xFF047857);
+  static const Color accentSubtle = Color(0xFFECFDF5);
+  static const Color accentBorder = Color(0xFFA7F3D0);
+  static const Color onAccent = Color(0xFFFFFFFF);
 
-  static const Color protein = Color(0xFF38BDF8);
-  static const Color carbs = Color(0xFFFB923C);
-  static const Color fat = Color(0xFFF43F5E);
-  static const Color calories = Color(0xFF05DF72);
-  static const Color water = Color(0xFF06B6D4);
+  // Status & Feedback
+  static const Color danger = Color(0xFFE11D48);
+  static const Color dangerSubtle = Color(0xFFFFF1F2);
+  static const Color warning = Color(0xFFD97706);
+  static const Color warningSubtle = Color(0xFFFFFBEB);
+  static const Color success = Color(0xFF059669);
+  static const Color successSubtle = Color(0xFFECFDF5);
 
-  static const Color lightBg = Color(0xFFFFFFFF);
-  static const Color lightSurface = Color(0xFFF8FAFC);
-  static const Color lightSurfaceElevated = Color(0xFFFFFFFF);
-  static const Color lightBorder = Color(0xFFE2E8F0);
-  static const Color lightBorderInput = Color(0xFF94A3B8);
-  static const Color lightText = Color(0xFF0F172A);
-  static const Color lightTextMuted = Color(0xFF64748B);
-  static const Color lightAccent = Color(0xFF059669);
-  static const Color lightOnAccent = Color(0xFFFFFFFF);
+  // Nutritional Macro Tokens
+  static const Color protein = Color(0xFF2563EB); // Cobalt Blue
+  static const Color proteinSubtle = Color(0xFFEFF6FF);
+  static const Color carbs = Color(0xFFD97706); // Warm Amber
+  static const Color carbsSubtle = Color(0xFFFFFBEB);
+  static const Color fat = Color(0xFFE11D48); // Rose
+  static const Color fatSubtle = Color(0xFFFFF1F2);
+  static const Color calories = Color(0xFF059669); // Emerald
+  static const Color water = Color(0xFF0284C7); // Sky Blue
+  static const Color waterSubtle = Color(0xFFF0F9FF);
+
+  // Aliases for compatibility
+  static const Color accentGlow = Color(0xFF10B981);
+  static const Color lightBg = bg;
+  static const Color lightSurface = surface;
+  static const Color lightSurfaceElevated = surfaceElevated;
+  static const Color lightBorder = border;
+  static const Color lightBorderInput = borderInput;
+  static const Color lightText = text;
+  static const Color lightTextMuted = textMuted;
+  static const Color lightAccent = accent;
+  static const Color lightOnAccent = onAccent;
 }

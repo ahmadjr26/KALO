@@ -8,8 +8,8 @@ abstract final class MockDatabase {
 
   static UserProfile seedProfile = UserProfile(
     id: _uuid.v4(),
-    name: 'Alex Rivera',
-    email: 'alex@example.com',
+    name: 'Champion',
+    email: '',
     gender: 'Male',
     age: 26,
     heightCm: 180,

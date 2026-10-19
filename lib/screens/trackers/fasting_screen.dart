@@ -52,7 +52,7 @@ class FastingScreen extends ConsumerWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('🔥', style: TextStyle(fontSize: 28)),
+                            const Icon(Icons.local_fire_department_rounded, color: AppColors.warning, size: 36),
                             const SizedBox(height: 6),
                             Text(
                               state.isFasting ? '13h 24m' : '0h 00m',

@@ -190,7 +190,7 @@ class SettingsScreen extends ConsumerWidget {
                         child: Text(
                           userEmail.isNotEmpty ? userEmail[0].toUpperCase() : 'K',
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontWeight: FontWeight.w900,
                             fontSize: 22,
                           ),

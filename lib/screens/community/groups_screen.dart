@@ -10,7 +10,7 @@ class GroupsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final members = [
       {'rank': '1', 'name': 'Jordan K.', 'streak': '28 days', 'emoji': '🥇'},
-      {'rank': '2', 'name': 'Alex Rivera (You)', 'streak': '7 days', 'emoji': '🥈'},
+      {'rank': '2', 'name': 'You', 'streak': '7 days', 'emoji': '🥈'},
       {'rank': '3', 'name': 'Sarah M.', 'streak': '6 days', 'emoji': '🥉'},
       {'rank': '4', 'name': 'Marcus L.', 'streak': '5 days', 'emoji': '⚡'},
       {'rank': '5', 'name': 'Elena R.', 'streak': '3 days', 'emoji': '⚡'},

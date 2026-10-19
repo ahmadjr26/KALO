@@ -25,9 +25,9 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = switch (size) {
-      ButtonSize.sm => 36.0,
+      ButtonSize.sm => 38.0,
       ButtonSize.md => 48.0,
-      ButtonSize.lg => 56.0,
+      ButtonSize.lg => 54.0,
     };
 
     final double fontSize = switch (size) {
@@ -36,37 +36,40 @@ class PrimaryButton extends StatelessWidget {
       ButtonSize.lg => 16.0,
     };
 
-    Color bgColor = switch (variant) {
+    final Color bgColor = switch (variant) {
       ButtonVariant.primary => AppColors.accent,
       ButtonVariant.secondary => AppColors.surface,
       ButtonVariant.ghost => Colors.transparent,
       ButtonVariant.danger => AppColors.danger,
     };
 
-    Color textColor = switch (variant) {
+    final Color textColor = switch (variant) {
       ButtonVariant.primary => AppColors.onAccent,
       ButtonVariant.secondary => AppColors.text,
       ButtonVariant.ghost => AppColors.textMuted,
-      ButtonVariant.danger => Colors.black,
+      ButtonVariant.danger => Colors.white,
     };
 
-    BorderSide border = switch (variant) {
+    final BorderSide border = switch (variant) {
       ButtonVariant.secondary => const BorderSide(color: AppColors.border, width: 1),
       _ => BorderSide.none,
     };
 
-    final isPrimary = variant == ButtonVariant.primary && onPressed != null && !isLoading;
+    final borderRadius = BorderRadius.circular(14);
 
-    final Widget buttonWidget = SizedBox(
+    return SizedBox(
       height: height,
       child: Material(
-        color: onPressed == null || isLoading ? bgColor.withAlpha(120) : bgColor,
-        shape: StadiumBorder(side: border),
+        color: onPressed == null || isLoading ? bgColor.withAlpha(140) : bgColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius,
+          side: border,
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: isLoading ? null : onPressed,
-          splashColor: Colors.white.withAlpha(40),
-          highlightColor: Colors.white.withAlpha(20),
+          splashColor: Colors.black.withAlpha(15),
+          highlightColor: Colors.black.withAlpha(10),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
@@ -75,7 +78,7 @@ class PrimaryButton extends StatelessWidget {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
+                        strokeWidth: 2.2,
                         valueColor: AlwaysStoppedAnimation<Color>(textColor),
                       ),
                     )
@@ -103,23 +106,5 @@ class PrimaryButton extends StatelessWidget {
         ),
       ),
     );
-
-    if (isPrimary) {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.accent.withValues(alpha: 0.25),
-              blurRadius: 18,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: buttonWidget,
-      );
-    }
-
-    return buttonWidget;
   }
 }

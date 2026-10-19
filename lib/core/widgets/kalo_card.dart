@@ -11,7 +11,7 @@ class KaloCard extends StatelessWidget {
   const KaloCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsetsDirectional.all(20),
+    this.padding = const EdgeInsetsDirectional.all(18),
     this.onTap,
     this.hasGlow = false,
     this.borderColor,
@@ -20,23 +20,21 @@ class KaloCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveBorderColor = borderColor ??
-        (hasGlow ? AppColors.accent.withValues(alpha: 0.4) : AppColors.border);
+        (hasGlow ? AppColors.accent : AppColors.border);
 
     final cardContent = Container(
       padding: padding,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: effectiveBorderColor, width: hasGlow ? 1.5 : 1),
-        boxShadow: hasGlow
-            ? [
-                BoxShadow(
-                  color: AppColors.accent.withValues(alpha: 0.12),
-                  blurRadius: 16,
-                  spreadRadius: 2,
-                )
-              ]
-            : null,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x080F172A),
+            blurRadius: 12,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: child,
     );
@@ -44,12 +42,12 @@ class KaloCard extends StatelessWidget {
     if (onTap != null) {
       return Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          splashColor: AppColors.accent.withValues(alpha: 0.1),
-          highlightColor: AppColors.surfaceElevated.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(18),
+          splashColor: AppColors.accent.withAlpha(20),
+          highlightColor: AppColors.surfaceElevated,
           child: cardContent,
         ),
       );

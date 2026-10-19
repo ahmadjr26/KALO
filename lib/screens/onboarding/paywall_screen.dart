@@ -36,7 +36,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: AppColors.surfaceElevated,
-        content: Text('🎉 Welcome to Cal AI Unlimited!'),
+        content: Text('🎉 Welcome to Kalo Unlimited!'),
       ),
     );
 
@@ -97,7 +97,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Achieve Your Goal Faster with Cal AI',
+                        'Achieve Your Goal Faster with Kalo',
                         style: AppTypography.display.copyWith(fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 24),
@@ -269,7 +269,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               PrimaryButton(
                 label: _selectedPlan == 0
                     ? 'Start 3-Day Free Trial'
-                    : 'Unlock Cal AI Monthly',
+                    : 'Unlock Kalo Monthly',
                 size: ButtonSize.lg,
                 onPressed: _subscribe,
               ),
@@ -352,7 +352,11 @@ class _DiscountWheelDialogState extends State<_DiscountWheelDialog>
     _spinController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
-    );
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          setState(() {});
+        }
+      });
   }
 
   @override
@@ -369,7 +373,7 @@ class _DiscountWheelDialogState extends State<_DiscountWheelDialog>
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: AppColors.surfaceElevated,
+      backgroundColor: AppColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
         side: const BorderSide(color: AppColors.border),
@@ -412,7 +416,7 @@ class _DiscountWheelDialogState extends State<_DiscountWheelDialog>
             ),
             const SizedBox(height: 6),
             Text(
-              'Spin the wheel to unlock an exclusive discount off Cal AI Unlimited.',
+              'Spin the wheel to unlock an exclusive discount off Kalo Unlimited.',
               style: AppTypography.xs.copyWith(color: AppColors.textMuted),
               textAlign: TextAlign.center,
             ),
@@ -472,7 +476,7 @@ class _DiscountWheelDialogState extends State<_DiscountWheelDialog>
               ),
               const SizedBox(height: 6),
               Text(
-                'Get Cal AI for just \$1.99/mo',
+                'Get Kalo for just \$1.99/mo',
                 style: AppTypography.sm.copyWith(color: AppColors.text),
               ),
               const SizedBox(height: 16),

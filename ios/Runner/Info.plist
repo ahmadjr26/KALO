@@ -30,6 +30,10 @@
 	<string>KALO requires camera access to scan your food plates and detect calories.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>KALO requires photo library access to import meal photos for nutritional analysis.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>KALO requires microphone access to log food via voice description.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>KALO requires speech recognition to transcribe spoken meals into ingredients.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

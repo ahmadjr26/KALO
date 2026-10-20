@@ -171,69 +171,109 @@ class SettingsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(color: AppColors.border),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.accent,
-                      ),
-                      child: Center(
-                        child: Text(
-                          userEmail.isNotEmpty ? userEmail[0].toUpperCase() : 'K',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 22,
-                          ),
-                        ),
-                      ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(6),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  ],
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      // Centered Avatar with Edit Pen Badge matching Figma Frame 1:1223 & 1:1228
+                      Stack(
                         children: [
-                          Text(
-                            isSignedIn ? (userEmail.split('@').first) : (isAr ? 'حساب ضيف' : 'Guest Account'),
-                            style: AppTypography.base.copyWith(fontWeight: FontWeight.w800),
-                          ),
-                          Text(
-                            userEmail.isNotEmpty ? userEmail : (isAr ? 'لم يتم تسجيل الدخول' : 'Not signed in'),
-                            style: AppTypography.xs,
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Icon(
-                                isSignedIn ? Icons.verified : Icons.cloud_off,
-                                size: 14,
-                                color: isSignedIn ? AppColors.accent : AppColors.textMuted,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                isSignedIn
-                                    ? (isAr ? 'المزامنة السحابية مفعّلة' : 'Supabase Cloud Sync Active')
-                                    : (isAr ? 'وضع محلي غير متصل' : 'Local Offline Mode'),
-                                style: AppTypography.xs.copyWith(
-                                  color: isSignedIn ? AppColors.accent : AppColors.textMuted,
-                                  fontWeight: FontWeight.w700,
+                          Container(
+                            width: 88,
+                            height: 88,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFFCDE26D).withAlpha(60),
+                              border: Border.all(color: const Color(0xFFCDE26D), width: 2),
+                            ),
+                            child: Center(
+                              child: Text(
+                                userEmail.isNotEmpty ? userEmail[0].toUpperCase() : 'K',
+                                style: const TextStyle(
+                                  color: AppColors.text,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 34,
                                 ),
                               ),
-                            ],
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.border, width: 1.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(15),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Icon(Icons.edit_rounded, size: 14, color: AppColors.text),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 14),
+                      Text(
+                        isSignedIn ? (userEmail.split('@').first) : (isAr ? 'حساب ضيف' : 'Guest User'),
+                        style: AppTypography.lg.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        userEmail.isNotEmpty ? '@${userEmail.split('@').first}' : '@kalo_guest',
+                        style: AppTypography.xs.copyWith(color: AppColors.textMuted),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isSignedIn ? AppColors.accentSubtle : AppColors.surfaceElevated,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isSignedIn ? Icons.verified : Icons.cloud_off,
+                              size: 13,
+                              color: isSignedIn ? AppColors.accent : AppColors.textMuted,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isSignedIn
+                                  ? (isAr ? 'المزامنة السحابية مفعّلة' : 'Cloud Sync Active')
+                                  : (isAr ? 'وضع محلي غير متصل' : 'Local Offline Mode'),
+                              style: AppTypography.xs.copyWith(
+                                color: isSignedIn ? AppColors.accent : AppColors.textMuted,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -307,7 +347,8 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () => ref.read(localeProvider.notifier).setLanguage(AppLanguage.arabic),
+                        behavior: HitTestBehavior.opaque,
+onTap: () => ref.read(localeProvider.notifier).setLanguage(AppLanguage.arabic),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -337,7 +378,8 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () => ref.read(localeProvider.notifier).setLanguage(AppLanguage.english),
+                        behavior: HitTestBehavior.opaque,
+onTap: () => ref.read(localeProvider.notifier).setLanguage(AppLanguage.english),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(vertical: 12),

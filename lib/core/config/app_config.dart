@@ -18,10 +18,10 @@ class AppConfig {
   );
   static const String geminiModel = String.fromEnvironment(
     'GEMINI_MODEL',
-    defaultValue: 'gemini-3.5-flash-lite',
+    defaultValue: 'gemini-2.5-flash',
   );
   static const String geminiLegacyModel = String.fromEnvironment(
     'GEMINI_LEGACY_MODEL',
-    defaultValue: 'gemini-flash-lite-latest',
+    defaultValue: 'gemini-1.5-flash',
   );
 }

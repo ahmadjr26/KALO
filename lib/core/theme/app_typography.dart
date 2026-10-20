@@ -20,7 +20,33 @@ abstract final class AppTypography {
         color: color,
       );
     }
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.poppins(
+      fontSize: fontSize,
+      height: height,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+      color: color,
+    );
+  }
+
+  static TextStyle displayHeadline({
+    required double fontSize,
+    required FontWeight fontWeight,
+    required Color color,
+    double? height,
+    double? letterSpacing,
+    bool isArabic = false,
+  }) {
+    if (isArabic) {
+      return GoogleFonts.cairo(
+        fontSize: fontSize,
+        height: height,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+        color: color,
+      );
+    }
+    return GoogleFonts.quicksand(
       fontSize: fontSize,
       height: height,
       fontWeight: fontWeight,
@@ -71,10 +97,10 @@ abstract final class AppTypography {
         color: AppColors.text,
       );
 
-  static TextStyle get display => font(
+  static TextStyle get display => displayHeadline(
         fontSize: 38,
         height: 44 / 38,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
         color: AppColors.text,
       );

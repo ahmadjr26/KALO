@@ -7,6 +7,7 @@ import '../../core/theme/app_typography.dart';
 import '../../models/meal.dart';
 import '../../providers/app_state_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../core/widgets/meal_slot_card.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -105,32 +106,7 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
 
-              // 4. Primary Meal-Logging Hero Banner & Shortcuts
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: _QuickLogActionBanner(
-                    isAr: isAr,
-                    currentLang: currentLang,
-                  ),
-                ),
-              ),
 
-              // 5. Cohesive Daily Habits (Hydration + Intermittent Fasting)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                  child: _DailyHabitsSection(
-                    waterIntakeMl: state.waterIntakeMl,
-                    waterTargetMl: profile.waterTargetMl,
-                    isFasting: state.isFasting,
-                    isAr: isAr,
-                    onAddWater: () {
-                      ref.read(appStateProvider.notifier).addWater(250);
-                    },
-                  ),
-                ),
-              ),
 
               // 6. Section Header for Today's Meals
               SliverToBoxAdapter(
@@ -201,6 +177,74 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                 ),
 
+              // 6. Primary Meal-Logging Hero Banner & Shortcuts
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: _QuickLogActionBanner(
+                    isAr: isAr,
+                    currentLang: currentLang,
+                  ),
+                ),
+              ),
+
+              // 7. Meal Planner Slots matching Figma Frame 1:230
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isAr ? 'جدول الوجبات اليومي' : 'Daily Meal Schedule',
+                        style: AppTypography.sm.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.text,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      MealSlotCard(
+                        title: isAr ? 'إضافة فطور' : 'Add Breakfast',
+                        recommendedCal: isAr ? 'المقترح 450-650 سعرة' : 'Recommended 450-650 cal',
+                        icon: Icons.breakfast_dining_rounded,
+                        iconBgColor: const Color(0xFFCDE26D),
+                        onAdd: () => context.push('/scanner'),
+                      ),
+                      MealSlotCard(
+                        title: isAr ? 'إضافة غداء' : 'Add Lunch',
+                        recommendedCal: isAr ? 'المقترح 600-800 سعرة' : 'Recommended 600-800 cal',
+                        icon: Icons.lunch_dining_rounded,
+                        iconBgColor: AppColors.figmaAmber,
+                        onAdd: () => context.push('/scanner'),
+                      ),
+                      MealSlotCard(
+                        title: isAr ? 'إضافة عشاء' : 'Add Dinner',
+                        recommendedCal: isAr ? 'المقترح 500-700 سعرة' : 'Recommended 500-700 cal',
+                        icon: Icons.dinner_dining_rounded,
+                        iconBgColor: AppColors.figmaRose,
+                        onAdd: () => context.push('/scanner'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 8. Cohesive Daily Habits (Hydration + Intermittent Fasting)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                  child: _DailyHabitsSection(
+                    waterIntakeMl: state.waterIntakeMl,
+                    waterTargetMl: profile.waterTargetMl,
+                    isFasting: state.isFasting,
+                    isAr: isAr,
+                    onAddWater: () {
+                      ref.read(appStateProvider.notifier).addWater(250);
+                    },
+                  ),
+                ),
+              ),
+
               const SliverToBoxAdapter(
                 child: SizedBox(height: 100),
               ),
@@ -256,6 +300,27 @@ class _EditorialHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Circular User Avatar matching Figma Frame 1:233
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFCDE26D).withAlpha(50),
+                  border: Border.all(color: const Color(0xFFCDE26D), width: 1.5),
+                ),
+                child: Center(
+                  child: Text(
+                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'K',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.text,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,13 +350,13 @@ class _EditorialHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 2),
                     Text(
                       '${AppStrings.get('hey', currentLang)}, $displayName',
-                      style: AppTypography.xl.copyWith(
+                      style: AppTypography.lg.copyWith(
                         fontWeight: FontWeight.w900,
                         color: AppColors.text,
-                        letterSpacing: -0.5,
+                        letterSpacing: -0.3,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -299,10 +364,27 @@ class _EditorialHeader extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
+              // Search circle button matching Figma Frame 1:236
+              GestureDetector(
+                onTap: () => context.push('/food-search'),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.search_rounded, size: 18, color: AppColors.text),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
               // Streak Capsule with warm amber styling
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.warningSubtle,
                   borderRadius: BorderRadius.circular(999),
@@ -314,11 +396,11 @@ class _EditorialHeader extends StatelessWidget {
                     const Icon(
                       Icons.local_fire_department_rounded,
                       color: AppColors.warning,
-                      size: 16,
+                      size: 15,
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 3),
                     Text(
-                      '$streak ${AppStrings.get('days_streak', currentLang)}',
+                      '$streak',
                       style: AppTypography.xs.copyWith(
                         color: AppColors.warning,
                         fontWeight: FontWeight.w800,

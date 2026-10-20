@@ -16,64 +16,59 @@ void main() {
   });
 
   group('GeminiScannerService resilience & error handling', () {
-    test('handles empty response gracefully without crashing', () async {
+    test('handles empty response by throwing GeminiApiException', () async {
       final mockClient = MockClient((request) async {
         return http.Response('', 200);
       });
       final service = GeminiScannerService(client: mockClient);
-      final result = await service.scanFoodImage(
-        imageBytes: Uint8List.fromList([1, 2, 3]),
+      expect(
+        () => service.scanFoodImage(imageBytes: Uint8List.fromList([1, 2, 3])),
+        throwsA(isA<GeminiApiException>()),
       );
-      expect(result.foodName, equals('Scanned Meal'));
-      expect(result.totalCalories, isPositive);
     });
 
-    test('handles malformed JSON gracefully without crashing', () async {
+    test('handles malformed JSON by throwing GeminiApiException', () async {
       final mockClient = MockClient((request) async {
         return http.Response('{"corrupted_json: [}', 200);
       });
       final service = GeminiScannerService(client: mockClient);
-      final result = await service.scanFoodImage(
-        imageBytes: Uint8List.fromList([4, 5, 6]),
+      expect(
+        () => service.scanFoodImage(imageBytes: Uint8List.fromList([4, 5, 6])),
+        throwsA(isA<GeminiApiException>()),
       );
-      expect(result.foodName, equals('Scanned Meal'));
-      expect(result.totalCalories, isPositive);
     });
 
-    test('handles server 500 error gracefully without crashing', () async {
+    test('handles server 500 error by throwing GeminiApiException', () async {
       final mockClient = MockClient((request) async {
         return http.Response('Internal Server Error', 500);
       });
       final service = GeminiScannerService(client: mockClient);
-      final result = await service.scanFoodImage(
-        imageBytes: Uint8List.fromList([7, 8, 9]),
+      expect(
+        () => service.scanFoodImage(imageBytes: Uint8List.fromList([7, 8, 9])),
+        throwsA(isA<GeminiApiException>()),
       );
-      expect(result.foodName, equals('Scanned Meal'));
-      expect(result.totalCalories, isPositive);
     });
 
-    test('handles missing candidates in JSON response gracefully', () async {
+    test('handles missing candidates in JSON response by throwing GeminiApiException', () async {
       final mockClient = MockClient((request) async {
         return http.Response(jsonEncode({'candidates': []}), 200);
       });
       final service = GeminiScannerService(client: mockClient);
-      final result = await service.scanFoodImage(
-        imageBytes: Uint8List.fromList([10, 11, 12]),
+      expect(
+        () => service.scanFoodImage(imageBytes: Uint8List.fromList([10, 11, 12])),
+        throwsA(isA<GeminiApiException>()),
       );
-      expect(result.foodName, equals('Scanned Meal'));
-      expect(result.totalCalories, isPositive);
     });
 
-    test('handles network timeout and client exceptions gracefully', () async {
+    test('handles network timeout and client exceptions by throwing GeminiApiException', () async {
       final mockClient = MockClient((request) async {
         throw http.ClientException('Connection timed out');
       });
       final service = GeminiScannerService(client: mockClient);
-      final result = await service.scanFoodImage(
-        imageBytes: Uint8List.fromList([13, 14, 15]),
+      expect(
+        () => service.scanFoodImage(imageBytes: Uint8List.fromList([13, 14, 15])),
+        throwsA(isA<GeminiApiException>()),
       );
-      expect(result.foodName, equals('Scanned Meal'));
-      expect(result.totalCalories, isPositive);
     });
   });
 

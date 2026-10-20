@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/utils/permission_utils.dart';
 import '../../data/mock_database.dart';
 import '../../models/meal.dart';
 import '../../models/meal_ingredient.dart';
@@ -90,6 +91,12 @@ class _CameraScannerScreenState extends ConsumerState<CameraScannerScreen>
       _triggerTestMock();
       return;
     }
+
+    final hasPermission = await PermissionUtils.requestCameraPermission(
+      context,
+      reason: 'Camera access is required to take food photos for calorie analysis.',
+    );
+    if (!hasPermission) return;
 
     try {
       final XFile? file = await _picker.pickImage(
@@ -181,7 +188,7 @@ class _CameraScannerScreenState extends ConsumerState<CameraScannerScreen>
       final isNotFood = err is FormatException && err.message == 'NOT_FOOD_DETECTED';
       final alertMsg = isNotFood
           ? AppStrings.get('not_food_error', lang)
-          : AppStrings.get('scan_error_retry', lang);
+          : (err is GeminiApiException ? err.message : AppStrings.get('scan_error_retry', lang));
 
       showModalBottomSheet(
         context: context,

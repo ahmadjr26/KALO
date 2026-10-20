@@ -20,7 +20,7 @@ abstract final class AppTheme {
         outline: AppColors.border,
         outlineVariant: AppColors.borderInput,
       ),
-      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+      fontFamily: GoogleFonts.poppins().fontFamily,
       cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0,

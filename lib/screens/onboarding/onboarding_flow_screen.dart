@@ -8,6 +8,7 @@ import '../../core/widgets/kalo_card.dart';
 import '../../core/widgets/option_card.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/segmented_toggle.dart';
+import '../../core/widgets/weight_ruler_picker.dart';
 import '../../providers/app_state_provider.dart';
 
 class OnboardingFlowScreen extends ConsumerStatefulWidget {
@@ -223,6 +224,22 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
                 size: ButtonSize.lg,
                 onPressed: _nextStep,
               ),
+              if (_currentStep < _totalSteps - 1)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() => _currentStep = _totalSteps - 1);
+                    },
+                    child: Text(
+                      isArabic ? 'تخطي' : 'Skip',
+                      style: AppTypography.sm.copyWith(
+                        color: AppColors.textMuted,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -782,45 +799,30 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: AppColors.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(6),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    context.tr(ref, 'weight_label'),
-                    style: AppTypography.base.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    isImperial
-                        ? '${(_currentWeightKg * 2.20462).toStringAsFixed(1)} lbs'
-                        : '${_currentWeightKg.toStringAsFixed(1)} kg',
-                    style: AppTypography.lg.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.accent,
-                    ),
-                  ),
-                ],
+              Text(
+                context.tr(ref, 'weight_label'),
+                style: AppTypography.base.copyWith(fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: 12),
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: AppColors.accent,
-                  inactiveTrackColor: AppColors.border,
-                  thumbColor: AppColors.accent,
-                  overlayColor: AppColors.accent.withAlpha(30),
-                  trackHeight: 4,
-                ),
-                child: Slider(
-                  value: _currentWeightKg,
-                  min: 40,
-                  max: 180,
-                  onChanged: (val) => setState(() => _currentWeightKg = val),
-                ),
+              const SizedBox(height: 16),
+              WeightRulerPicker(
+                initialValue: _currentWeightKg,
+                min: 40,
+                max: 180,
+                unit: isImperial ? 'lbs' : 'Kg',
+                onChanged: (val) => setState(() => _currentWeightKg = val),
               ),
             ],
           ),

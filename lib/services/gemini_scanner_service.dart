@@ -18,8 +18,12 @@ class GeminiApiException implements Exception {
 
 class GeminiScannerService {
   final http.Client _client;
+  final String? apiKey;
 
-  GeminiScannerService({http.Client? client}) : _client = client ?? http.Client();
+  GeminiScannerService({http.Client? client, this.apiKey})
+      : _client = client ?? http.Client();
+
+  String get _effectiveApiKey => (apiKey ?? AppConfig.geminiApiKey).trim();
 
   String _computeImageHash(Uint8List bytes, List<String>? contextTags) {
     int hash = 0xcbf29ce484222325;
@@ -117,8 +121,9 @@ class GeminiScannerService {
     });
 
     final activeModel = model ?? AppConfig.geminiModel;
+    final apiKey = _effectiveApiKey;
     final primaryUrl = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=${AppConfig.geminiApiKey}',
+      'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=$apiKey',
     );
 
     http.Response? response;
@@ -140,7 +145,7 @@ class GeminiScannerService {
           ? AppConfig.geminiLegacyModel
           : AppConfig.geminiModel;
       final fallbackUrl = Uri.parse(
-        'https://generativelanguage.googleapis.com/v1beta/models/$fallbackModel:generateContent?key=${AppConfig.geminiApiKey}',
+        'https://generativelanguage.googleapis.com/v1beta/models/$fallbackModel:generateContent?key=$apiKey',
       );
       try {
         response = await _client.post(
@@ -153,27 +158,7 @@ class GeminiScannerService {
       }
     }
 
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      throw GeminiApiException(
-        'Gemini API authentication failed (HTTP ${response.statusCode}). The configured GEMINI_API_KEY is invalid or unauthorized.',
-        statusCode: response.statusCode,
-      );
-    }
-
-    if (response.statusCode == 429) {
-      throw GeminiApiException(
-        'Gemini API quota exceeded or rate limited (HTTP 429). Please wait a moment and try again.',
-        statusCode: 429,
-      );
-    }
-
-    if (response.statusCode != 200 || response.body.trim().isEmpty) {
-      throw GeminiApiException(
-        'Gemini API request failed (HTTP ${response.statusCode}): ${response.body}',
-        statusCode: response.statusCode,
-      );
-    }
-
+    _validateResponse(response);
     return _parseGeminiContent(response.body, userId, cacheKey);
   }
 
@@ -201,8 +186,9 @@ class GeminiScannerService {
     });
 
     final activeModel = AppConfig.geminiModel;
+    final apiKey = _effectiveApiKey;
     final primaryUrl = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=${AppConfig.geminiApiKey}',
+      'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=$apiKey',
     );
 
     final response = await _client.post(
@@ -211,20 +197,7 @@ class GeminiScannerService {
       body: requestBody,
     ).timeout(const Duration(seconds: 25));
 
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      throw GeminiApiException(
-        'Gemini API key is unauthorized or invalid (HTTP ${response.statusCode}).',
-        statusCode: response.statusCode,
-      );
-    }
-
-    if (response.statusCode != 200) {
-      throw GeminiApiException(
-        'Gemini text parsing failed (HTTP ${response.statusCode}): ${response.body}',
-        statusCode: response.statusCode,
-      );
-    }
-
+    _validateResponse(response);
     return _parseGeminiContent(response.body, userId, null);
   }
 
@@ -257,8 +230,9 @@ class GeminiScannerService {
     });
 
     final activeModel = AppConfig.geminiModel;
+    final apiKey = _effectiveApiKey;
     final primaryUrl = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=${AppConfig.geminiApiKey}',
+      'https://generativelanguage.googleapis.com/v1beta/models/$activeModel:generateContent?key=$apiKey',
     );
 
     final response = await _client.post(
@@ -267,14 +241,55 @@ class GeminiScannerService {
       body: requestBody,
     ).timeout(const Duration(seconds: 25));
 
-    if (response.statusCode != 200) {
+    _validateResponse(response);
+    return _parseGeminiContent(response.body, userId, null);
+  }
+
+  String _extractErrorMessage(String responseBody, String defaultMsg) {
+    try {
+      final decoded = jsonDecode(responseBody);
+      if (decoded is Map && decoded['error'] is Map) {
+        final msg = decoded['error']['message'];
+        if (msg is String && msg.trim().isNotEmpty) {
+          return msg.trim();
+        }
+      }
+    } catch (_) {}
+    return defaultMsg;
+  }
+
+  void _validateResponse(http.Response response) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      if (_effectiveApiKey.isEmpty) {
+        throw GeminiApiException(
+          'Gemini API key is not configured (HTTP ${response.statusCode}). Please launch the app with --dart-define=GEMINI_API_KEY=your_key or configure it in run settings.',
+          statusCode: response.statusCode,
+        );
+      }
+      final detail = _extractErrorMessage(
+        response.body,
+        'The configured GEMINI_API_KEY is invalid or unauthorized.',
+      );
       throw GeminiApiException(
-        'Nutrition label OCR failed (HTTP ${response.statusCode}). Please verify API key and image clarity.',
+        'Gemini API authentication failed (HTTP ${response.statusCode}). $detail',
         statusCode: response.statusCode,
       );
     }
 
-    return _parseGeminiContent(response.body, userId, null);
+    if (response.statusCode == 429) {
+      throw const GeminiApiException(
+        'Gemini API quota exceeded or rate limited (HTTP 429). Please wait a moment and try again.',
+        statusCode: 429,
+      );
+    }
+
+    if (response.statusCode != 200 || response.body.trim().isEmpty) {
+      final detail = _extractErrorMessage(response.body, response.body);
+      throw GeminiApiException(
+        'Gemini API request failed (HTTP ${response.statusCode}): $detail',
+        statusCode: response.statusCode,
+      );
+    }
   }
 
   MealLog _parseGeminiContent(String responseBody, String? userId, String? cacheKey) {
